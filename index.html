@@ -102,7 +102,7 @@
     }
 
     function refreshData() {
-      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi FINAL'];
+      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi ORACLE'];
       state.bubbleText = signals[Math.floor(Math.random() * signals.length)];
       toast('Data agen diperbarui');
       render();
@@ -140,54 +140,24 @@
             </div>
           </div>
 
-          <!-- RUANG KANTOR VIRTUAL (100% AMAN TANPA ERROR FILE GAMBAR) -->
+          <!-- RUANG KANTOR DENGAN 1 ORANG AGEN -->
           <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-gradient-to-br from-slate-100 to-amber-50' : 'relative rounded-2xl h-[390px] bg-gradient-to-br from-slate-100 to-amber-50 border border-gray-200/80 overflow-hidden shadow-inner flex items-center justify-center'}">
             
-            <!-- Grid Meja Kantor Pusat (4 Kubikel) -->
-            <div class="relative w-[300px] h-[220px] bg-amber-50/80 border border-amber-200/60 rounded-xl shadow-sm p-4 flex flex-col justify-between">
+            <!-- Meja Kantor Tunggal -->
+            <div class="relative w-[240px] h-[180px] bg-amber-50/90 border border-amber-200/80 rounded-2xl shadow-md p-4 flex flex-col items-center justify-center">
               
-              <!-- Rak Arsip Latar Belakang -->
-              <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-[10px] px-4 py-1 rounded shadow flex gap-1 items-center font-bold">
-                🗄️ RAK ARSIP AI (4 AGEN AKTIF)
+              <!-- Rak Arsip Mini di Atas Meja -->
+              <div class="absolute -top-5 bg-amber-800 text-white text-[9px] px-3 py-0.5 rounded shadow font-bold">
+                🗄️ RUANG KERJA ORACLE
               </div>
 
-              <!-- Baris Atas: Oracle & Sentinel -->
-              <div class="flex justify-between items-center">
-                <!-- ORACLE -->
-                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-blue-200">
-                  <span class="text-lg">💻</span>
-                  <span class="text-[10px] font-extrabold text-blue-600 mt-0.5">ORACLE 🔵</span>
-                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mt-1"></span>
-                </div>
-
-                <!-- SENTINEL -->
-                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-amber-200" style="animation-delay:0.3s">
-                  <span class="text-lg">🛡️</span>
-                  <span class="text-[10px] font-extrabold text-amber-600 mt-0.5">SENTINEL 🟡</span>
-                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse mt-1"></span>
-                </div>
-              </div>
-
-              <!-- Garis Pembatas Kubikel -->
-              <div class="w-full h-[2px] bg-gray-300/60 my-auto relative">
-                <div class="absolute left-1/2 -translate-x-1/2 -top-4 bg-gray-200 text-[9px] px-2 py-0.5 rounded text-gray-600 font-bold">PUSAT KONTROL</div>
-              </div>
-
-              <!-- Baris Bawah: Phantom & Final -->
-              <div class="flex justify-between items-center">
-                <!-- PHANTOM -->
-                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-purple-200" style="animation-delay:0.6s">
-                  <span class="text-lg">⚡</span>
-                  <span class="text-[10px] font-extrabold text-purple-600 mt-0.5">PHANTOM 🟣</span>
-                  <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse mt-1"></span>
-                </div>
-
-                <!-- FINAL -->
-                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-emerald-200" style="animation-delay:0.9s">
-                  <span class="text-lg">🎯</span>
-                  <span class="text-[10px] font-extrabold text-emerald-600 mt-0.5">FINAL 🟢</span>
-                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mt-1"></span>
-                </div>
+              <!-- ORACLE (1 Orang Agen) -->
+              <div class="agent-bob flex flex-col items-center bg-white/95 backdrop-blur px-5 py-3 rounded-2xl shadow-lg border border-blue-200">
+                <span class="text-2xl">💻</span>
+                <span class="text-xs font-extrabold text-blue-600 mt-1">ORACLE 🔵</span>
+                <span class="flex items-center gap-1.5 text-[10px] text-emerald-600 font-medium mt-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Memindai pasar...
+                </span>
               </div>
             </div>
 
@@ -261,17 +231,16 @@
         main.innerHTML = `
           <div class="bg-gray-200/80 p-1 rounded-xl grid grid-cols-3 gap-1">
             ${['Dry-run', 'Konfirmasi', 'Live'].map(m => `
-              <button onclick="state.mode='${m}'; toast('Mode diubah ke ${m}'); render()" class="py-2 rounded-lg text-xs font-semibold ${state.mode===m ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">${m}</button>
+              <button onclick="state.mode='${m}'; toast('Mode diubah ke${m}'); render()" class="py-2 rounded-lg text-xs font-semibold ${state.mode===m ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">${m}</button>
             `).join('')}
           </div>
           <div class="text-xs font-bold text-gray-400 uppercase pt-2">Strategi Aktif</div>
           <div class="bg-white rounded-2xl divide-y divide-gray-100 border border-gray-100">
             ${[{id: 'degen', name: 'Degen'}, {id: 'dip_buy', name: 'Dip Buy'}, {id: 'smart_money', name: 'Smart Money'}, {id: 'sniper', name: 'Sniper'}].map(s => `
-              <div onclick="state.strategy='${s.id}'; toast('Strategi ${s.name} aktif'); render()" class="p-3.5 flex justify-between items-center cursor-pointer">
+              <div onclick="state.strategy='${s.id}'; toast('Strategi${s.name} aktif'); render()" class="p-3.5 flex justify-between items-center cursor-pointer">
                 <div>
                   <div class="font-bold text-sm flex items-center gap-2">
-                    ${s.name}
-                    ${state.strategy===s.id ? '<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-700">AKTIF</span>' : ''}
+                    ${s.name}${state.strategy===s.id ? '<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-700">AKTIF</span>' : ''}
                   </div>
                   <div class="text-xs text-gray-400">${s.id}</div>
                 </div>
@@ -304,23 +273,4 @@
             <input id="w-addr" type="text" placeholder="Alamat Solana" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
             <button onclick="addWallet()" class="w-full bg-[#2563EB] text-white py-2.5 rounded-xl text-sm font-bold">Simpan</button>
             <div class="space-y-1 pt-1">
-              ${state.wallets.map(w => `<div class="text-xs bg-gray-50 p-2 rounded-lg flex justify-between"><b>${w.label}</b><span class="font-mono text-gray-400">${w.addr.slice(0,8)}...</span></div>`).join('')}
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    function addWallet() {
-      const label = document.getElementById('w-label').value.trim();
-      const addr = document.getElementById('w-addr').value.trim();
-      if (!label || !addr) return toast('Isi label dan alamat Solana dulu');
-      state.wallets.push({ label, addr });
-      toast('Wallet pantauan disimpan');
-      render();
-    }
-
-    render();
-  </script>
-</body>
-</html>
+              ${state.wallets.map(w => `<div class="text-xs bg-gray
