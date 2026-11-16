@@ -140,87 +140,59 @@
             </div>
           </div>
 
-          <!-- KANTOR 3D VECTOR ISOMETRIC PREMIUM (BEBAS ERROR FILE) -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#EAE6DF]' : 'relative rounded-2xl h-[390px] bg-[#EAE6DF] border border-gray-200/80 overflow-hidden shadow-inner'}">
+          <!-- RUANG KANTOR VIRTUAL (100% AMAN TANPA ERROR FILE GAMBAR) -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-gradient-to-br from-slate-100 to-amber-50' : 'relative rounded-2xl h-[390px] bg-gradient-to-br from-slate-100 to-amber-50 border border-gray-200/80 overflow-hidden shadow-inner flex items-center justify-center'}">
             
-            <svg viewBox="0 0 400 390" class="w-full h-full">
-              <!-- Lantai Kayu Estetik -->
-              <polygon points="200,20 385,115 200,325 15,115" fill="#E8C39E" stroke="#D1A77A" stroke-width="1.5"/>
+            <!-- Grid Meja Kantor Pusat (4 Kubikel) -->
+            <div class="relative w-[300px] h-[220px] bg-amber-50/80 border border-amber-200/60 rounded-xl shadow-sm p-4 flex flex-col justify-between">
               
-              <!-- Dinding Sudut Ruangan -->
-              <polygon points="15,115 200,325 200,345 15,135" fill="#B0BEC5"/>
-              <polygon points="385,115 200,325 200,345 385,135" fill="#78909C"/>
+              <!-- Rak Arsip Latar Belakang -->
+              <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-amber-800 text-white text-[10px] px-4 py-1 rounded shadow flex gap-1 items-center font-bold">
+                🗄️ RAK ARSIP AI (4 AGEN AKTIF)
+              </div>
 
-              <!-- Jendela Besar Sudut Kiri -->
-              <polygon points="55,60 200,20 200,165 55,205" fill="#CFFAFE" opacity="0.8"/>
-              <line x1="127" y1="40" x2="127" y2="185" stroke="#334155" stroke-width="3"/>
-              <line x1="55" y1="60" x2="127" y2="40" stroke="#334155" stroke-width="2"/>
+              <!-- Baris Atas: Oracle & Sentinel -->
+              <div class="flex justify-between items-center">
+                <!-- ORACLE -->
+                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-blue-200">
+                  <span class="text-lg">💻</span>
+                  <span class="text-[10px] font-extrabold text-blue-600 mt-0.5">ORACLE 🔵</span>
+                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mt-1"></span>
+                </div>
 
-              <!-- Rak Arsip Dinding Belakang (Warna-warni persis referensi) -->
-              <g transform="translate(230, 55)">
-                <rect x="0" y="0" width="125" height="48" fill="#C28E52" rx="2"/>
-                <!-- Kolom Binder Arsip -->
-                <rect x="8" y="4" width="12" height="40" fill="#2563EB"/>
-                <rect x="22" y="4" width="12" height="40" fill="#DC2626"/>
-                <rect x="36" y="4" width="12" height="40" fill="#10B981"/>
-                <rect x="50" y="4" width="12" height="40" fill="#9333EA"/>
-                <rect x="64" y="4" width="12" height="40" fill="#F59E0B"/>
-                <rect x="78" y="4" width="12" height="40" fill="#0EA5E9"/>
-                <rect x="92" y="4" width="12" height="40" fill="#EC4899"/>
-                <rect x="106" y="4" width="12" height="40" fill="#6366F1"/>
-              </g>
+                <!-- SENTINEL -->
+                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-amber-200" style="animation-delay:0.3s">
+                  <span class="text-lg">🛡️</span>
+                  <span class="text-[10px] font-extrabold text-amber-600 mt-0.5">SENTINEL 🟡</span>
+                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse mt-1"></span>
+                </div>
+              </div>
 
-              <!-- Tanaman Hias Sudut -->
-              <circle cx="75" cy="115" r="10" fill="#059669"/>
-              <rect x="72" y="123" width="6" height="8" fill="#475569"/>
+              <!-- Garis Pembatas Kubikel -->
+              <div class="w-full h-[2px] bg-gray-300/60 my-auto relative">
+                <div class="absolute left-1/2 -translate-x-1/2 -top-4 bg-gray-200 text-[9px] px-2 py-0.5 rounded text-gray-600 font-bold">PUSAT KONTROL</div>
+              </div>
 
-              <!-- Meja 1 (Oracle - Kiri) -->
-              <g class="agent-bob">
-                <rect x="80" y="145" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="100" y="130" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="103" y="132" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="113" cy="192" rx="10" ry="6" fill="#475569"/>
-                <circle cx="113" cy="186" r="8.5" fill="#3B82F6"/>
-                <rect x="70" y="102" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="113" y="115" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
-              </g>
+              <!-- Baris Bawah: Phantom & Final -->
+              <div class="flex justify-between items-center">
+                <!-- PHANTOM -->
+                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-purple-200" style="animation-delay:0.6s">
+                  <span class="text-lg">⚡</span>
+                  <span class="text-[10px] font-extrabold text-purple-600 mt-0.5">PHANTOM 🟣</span>
+                  <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse mt-1"></span>
+                </div>
 
-              <!-- Meja 2 (Sentinel - Kanan Atas) -->
-              <g class="agent-bob" style="animation-delay:0.3s">
-                <rect x="235" y="115" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="255" y="100" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="258" y="102" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="268" cy="162" rx="10" ry="6" fill="#475569"/>
-                <circle cx="268" cy="156" r="8.5" fill="#F59E0B"/>
-                <rect x="225" y="72" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="268" y="85" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
-              </g>
-
-              <!-- Meja 3 (Phantom - Kanan Bawah) -->
-              <g class="agent-bob" style="animation-delay:0.6s">
-                <rect x="235" y="210" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="255" y="195" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="258" y="197" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="268" cy="257" rx="10" ry="6" fill="#475569"/>
-                <circle cx="268" cy="251" r="8.5" fill="#8B5CF6"/>
-                <rect x="225" y="167" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="268" y="180" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
-              </g>
-
-              <!-- Meja 4 (Final - Bawah Tengah) -->
-              <g class="agent-bob" style="animation-delay:0.9s">
-                <rect x="135" y="225" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="155" y="210" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="158" y="212" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="168" cy="272" rx="10" ry="6" fill="#475569"/>
-                <circle cx="168" cy="266" r="8.5" fill="#10B981"/>
-                <rect x="125" y="182" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="168" y="195" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
-              </g>
-            </svg>
+                <!-- FINAL -->
+                <div class="agent-bob flex flex-col items-center bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow-md border border-emerald-200" style="animation-delay:0.9s">
+                  <span class="text-lg">🎯</span>
+                  <span class="text-[10px] font-extrabold text-emerald-600 mt-0.5">FINAL 🟢</span>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mt-1"></span>
+                </div>
+              </div>
+            </div>
 
             <!-- Bubble Teks Sinyal -->
-            <div class="animate-bubble absolute top-4 left-5 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
+            <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
               ${state.bubbleText}
             </div>
 
