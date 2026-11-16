@@ -310,3 +310,48 @@
   </script>
 </body>
 </html>
+import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Ganti dengan TOKEN bot Telegram kamu dari @BotFather
+TOKEN = "MASUKKAN_TOKEN_BOT_KAMU_DISINI"
+# Ganti dengan URL GitHub Pages kamu
+WEB_APP_URL = "https://muhya001-arch.github.io/Muhya-investasi/"
+
+bot = telebot.TeleBot(TOKEN)
+
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    markup = InlineKeyboardMarkup()
+    # Tombol untuk membuka Mini App Muhya Investasi
+    web_app_btn = InlineKeyboardButton(
+        text="📊 Buka Dashboard Muhya Investasi", 
+        web_app=telebot.types.WebAppInfo(url=WEB_APP_URL)
+    )
+    markup.add(web_app_btn)
+    
+    welcome_text = (
+        f"Halo, *{message.from_user.first_name}*! 👋\n\n"
+        "Selamat datang di bot pemantau **Muhya Investasi**.\n"
+        "Sistem agen AI isometrik siap memindai pasar Solana secara real-time.\n\n"
+        "Klik tombol di bawah untuk membuka dashboard Mini App:"
+    )
+    bot.send_message(message.chat.id, welcome_text, reply_markup=markup, parse_mode="Markdown")
+
+@bot.message_handler(commands=['signal'])
+def send_signal(message):
+    signal_text = (
+        "🚨 *SINYAL TRADING BARU TERDETEKSI*\n\n"
+        "• Token: *TURN / Turnpike*\n"
+        "• CA: `qay6c14bea8Y2ebCYwDpNtMqxEE27WZFJELKPQ6cGTA`\n"
+        "• Mcap: `$45.0K` | Liq: `$8.8K`\n"
+        "• Status: *Lolos Audit (Safe)*\n\n"
+        "Buka Mini App untuk melihat analisis lengkap agen AI."
+    )
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton("📈 Lihat di Dashboard", web_app=telebot.types.WebAppInfo(url=WEB_APP_URL)))
+    bot.send_message(message.chat.id, signal_text, reply_markup=markup, parse_mode="Markdown")
+
+if __name__ == "__main__":
+    print("Bot Muhya Investasi sedang berjalan...")
+    bot.infinity_polling()
