@@ -85,7 +85,7 @@
     function toast(msg) {
       const el = document.getElementById('toast');
       el.textContent = msg;
-      el.classList.remove('hidden');
+      el.classList.add('hidden');
       setTimeout(() => el.classList.add('hidden'), 2200);
     }
 
@@ -140,47 +140,47 @@
             </div>
           </div>
 
-          <!-- KANTOR MENGGUNAKAN GAMBAR LATIHAN (high-angle-office-interior-design.jpg) -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEEF2]' : 'relative rounded-2xl h-[380px] bg-[#ECEEF2] border border-gray-200/80 overflow-hidden'}">
+          <!-- KANTOR MENGGUNAKAN LATAR BELAKANG GAMBAR ASLI -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEEF2]' : 'relative rounded-2xl h-[390px] bg-[#ECEEF2] border border-gray-200/80 overflow-hidden shadow-inner'}">
             
-            <!-- Gambar Latar Kantor 3D -->
-            <img src="high-angle-office-interior-design.jpg" alt="Kantor 3D" class="w-full h-full object-cover select-none pointer-events-none" />
+            <!-- Gambar Latar Ruangan Kantor -->
+            <img src="high-angle-office-interior-design.jpg.jpg" alt="Kantor 3D" class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" />
 
             <!-- Bubble Teks Sinyal -->
-            <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20">
+            <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
               ${state.bubbleText}
             </div>
 
-            <!-- LABEL & TITIK AGEN 1: ORACLE (Kiri) -->
-            <div class="agent-bob absolute top-[52%] left-[32%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-              <div class="bg-black text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md flex items-center gap-1">
+            <!-- LABEL AGEN 1: ORACLE (Meja Kiri Atas) -->
+            <div class="agent-bob absolute top-[53%] left-[34%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 ORACLE <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL & TITIK AGEN 2: SENTINEL (Kanan Atas) -->
+            <!-- LABEL AGEN 2: SENTINEL (Meja Kanan Atas) -->
             <div class="agent-bob absolute top-[50%] left-[53%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.3s">
-              <div class="bg-black text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md flex items-center gap-1">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 SENTINEL <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL & TITIK AGEN 3: PHANTOM (Kanan Bawah) -->
-            <div class="agent-bob absolute top-[63%] left-[58%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.6s">
-              <div class="bg-black text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md flex items-center gap-1">
+            <!-- LABEL AGEN 3: PHANTOM (Meja Kanan Bawah) -->
+            <div class="agent-bob absolute top-[64%] left-[58%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.6s">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 PHANTOM <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL & TITIK AGEN 4: FINAL (Bawah) -->
-            <div class="agent-bob absolute top-[66%] left-[40%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.9s">
-              <div class="bg-black text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-md flex items-center gap-1">
+            <!-- LABEL AGEN 4: FINAL (Meja Kiri Bawah) -->
+            <div class="agent-bob absolute top-[67%] left-[39%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.9s">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 FINAL <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
               </div>
             </div>
 
             <!-- Tombol Layar Penuh -->
-            <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-white/95 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-200 z-30">
+            <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-white/95 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-200 z-30 backdrop-blur-sm">
               ${state.isFullscreen ? '✕ Tutup layar penuh' : '⛶ Layar penuh'}
             </button>
           </div>
@@ -285,7 +285,7 @@
             <div class="font-bold text-sm">Wallet Pantauan (${state.wallets.length})</div>
             <input id="w-label" type="text" placeholder="Label (mis. whale1)" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
             <input id="w-addr" type="text" placeholder="Alamat Solana" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
-            <button onclick="addWallet()" class="w-full bg-[#2563EB] text-white py-2.5 rounded-xl text-sm font-bold">Simpan</td>
+            <button onclick="addWallet()" class="w-full bg-[#2563EB] text-white py-2.5 rounded-xl text-sm font-bold">Simpan</button>
             <div class="space-y-1 pt-1">
               ${state.wallets.map(w => `<div class="text-xs bg-gray-50 p-2 rounded-lg flex justify-between"><b>${w.label}</b><span class="font-mono text-gray-400">${w.addr.slice(0,8)}...</span></div>`).join('')}
             </div>
