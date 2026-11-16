@@ -140,83 +140,43 @@
             </div>
           </div>
 
-          <!-- KANTOR 3D VECTOR ISOMETRIC AMAN TANPA FILE EKSTERNAL -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#E2E8F0]' : 'relative rounded-2xl h-[390px] bg-[#E2E8F0] border border-gray-200/80 overflow-hidden shadow-inner'}">
+          <!-- KANTOR 3D MENGGUNAKAN GAMBAR kantor_2.jpg (BASE64 EMBEDDED) -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#E5E7EB]' : 'relative rounded-2xl h-[390px] bg-[#E5E7EB] border border-gray-200/80 overflow-hidden shadow-inner'}">
             
-            <svg viewBox="0 0 400 390" class="w-full h-full">
-              <!-- Lantai Kayu (Wood Texture Tone) -->
-              <polygon points="200,25 380,120 200,320 20,120" fill="#F4E3C1" stroke="#D4B583" stroke-width="1.5"/>
-              
-              <!-- Dinding Kiri & Kanan -->
-              <polygon points="20,120 200,320 200,340 20,140" fill="#CBD5E1"/>
-              <polygon points="380,120 200,320 200,340 380,140" fill="#94A3B8"/>
-
-              <!-- Jendela Besar Kiri -->
-              <polygon points="60,65 200,25 200,165 60,205" fill="#E0F2FE" opacity="0.7"/>
-              <line x1="130" y1="45" x2="130" y2="185" stroke="#475569" stroke-width="3"/>
-
-              <!-- Rak Arsip Dinding Belakang (Penuh Binder Warna-Warni) -->
-              <g transform="translate(235, 60)">
-                <rect x="0" y="0" width="115" height="45" fill="#D97706" rx="2"/>
-                <rect x="10" y="5" width="15" height="35" fill="#2563EB"/>
-                <rect x="28" y="5" width="15" height="35" fill="#DC2626"/>
-                <rect x="46" y="5" width="15" height="35" fill="#10B981"/>
-                <rect x="64" y="5" width="15" height="35" fill="#9333EA"/>
-                <rect x="82" y="5" width="15" height="35" fill="#F59E0B"/>
-              </g>
-
-              <!-- Tanaman Hias Sudut -->
-              <circle cx="85" cy="110" r="11" fill="#059669"/>
-              <rect x="82" y="118" width="6" height="8" fill="#64748B"/>
-
-              <!-- Meja 1 (Oracle - Kiri) -->
-              <g class="agent-bob">
-                <rect x="85" y="145" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="105" y="130" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="108" y="132" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="118" cy="192" rx="10" ry="6" fill="#475569"/>
-                <circle cx="118" cy="186" r="8.5" fill="#3B82F6"/>
-                <rect x="75" y="102" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="118" y="115" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
-              </g>
-
-              <!-- Meja 2 (Sentinel - Kanan Atas) -->
-              <g class="agent-bob" style="animation-delay:0.3s">
-                <rect x="235" y="115" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="255" y="100" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="258" y="102" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="268" cy="162" rx="10" ry="6" fill="#475569"/>
-                <circle cx="268" cy="156" r="8.5" fill="#F59E0B"/>
-                <rect x="225" y="72" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="268" y="85" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
-              </g>
-
-              <!-- Meja 3 (Phantom - Kanan Bawah) -->
-              <g class="agent-bob" style="animation-delay:0.6s">
-                <rect x="235" y="210" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="255" y="195" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="258" y="197" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="268" cy="257" rx="10" ry="6" fill="#475569"/>
-                <circle cx="268" cy="251" r="8.5" fill="#8B5CF6"/>
-                <rect x="225" y="167" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="268" y="180" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
-              </g>
-
-              <!-- Meja 4 (Final - Bawah Tengah) -->
-              <g class="agent-bob" style="animation-delay:0.9s">
-                <rect x="135" y="225" width="65" height="32" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="155" y="210" width="26" height="16" rx="1" fill="#64748B"/>
-                <rect x="158" y="212" width="20" height="12" fill="#38BDF8"/>
-                <ellipse cx="168" cy="272" rx="10" ry="6" fill="#475569"/>
-                <circle cx="168" cy="266" r="8.5" fill="#10B981"/>
-                <rect x="125" y="182" width="86" height="18" rx="9" fill="#18181B"/>
-                <text x="168" y="195" fill="#FFF" font-size="8.5" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
-              </g>
-            </svg>
+            <!-- Gambar Kantor 2 Base64 Tanpa Error Path -->
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAAsACwBAREA/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AQIEAxEEIBUhMRJGBQYkIzhxFnbRUYHS8mkgM0HCkeKFkSMjFiTE8GRCKSo6dFVrRkYmIykthCVmRjYnYGKD0g1WD2KJlj6Wl8lhqSk5WWl6Y2mpKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2uC2hKjMcf/fIp7W0QYjyo/8AvkVNH9wUw/6xz/nNAFd7WHY37mP7veoVtY9o/dx5/3RV2b7r/AI1Tj+83PegBVto/8AniP++aT7JH/zxX8qlvL2DT7SW5uJBFBENzuewrk9X8a28Wk38umt5t/GjGAeXkbwORmgDplsozGP3MX/fNRmziLMPJi4/2RU3hy+m1Dw9p13cffnt43b6lRmlm/wBZP/vUAQiyh/594v8Avmk+yQ/8+8f/AHxVpv8AWt9B/OkXpQBF9jg/594/++KPsUH/AD7x/wDfFWU/1T/Sgf6g/WgD//Z" alt="Kantor 3D" class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" />
 
             <!-- Bubble Teks Sinyal -->
-            <div class="animate-bubble absolute top-4 left-5 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
+            <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
               ${state.bubbleText}
+            </div>
+
+            <!-- LABEL AGEN 1: ORACLE -->
+            <div class="agent-bob absolute top-[53%] left-[34%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
+                ORACLE <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+              </div>
+            </div>
+
+            <!-- LABEL AGEN 2: SENTINEL -->
+            <div class="agent-bob absolute top-[50%] left-[53%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.3s">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
+                SENTINEL <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+              </div>
+            </div>
+
+            <!-- LABEL AGEN 3: PHANTOM -->
+            <div class="agent-bob absolute top-[64%] left-[58%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.6s">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
+                PHANTOM <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
+              </div>
+            </div>
+
+            <!-- LABEL AGEN 4: FINAL -->
+            <div class="agent-bob absolute top-[67%] left-[39%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.9s">
+              <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
+                FINAL <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+              </div>
             </div>
 
             <!-- Tombol Layar Penuh -->
