@@ -85,7 +85,7 @@
     function toast(msg) {
       const el = document.getElementById('toast');
       el.textContent = msg;
-      el.classList.add('hidden');
+      el.classList.remove('hidden');
       setTimeout(() => el.classList.add('hidden'), 2200);
     }
 
@@ -140,39 +140,39 @@
             </div>
           </div>
 
-          <!-- KANTOR MENGGUNAKAN LATAR BELAKANG GAMBAR ASLI -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEEF2]' : 'relative rounded-2xl h-[390px] bg-[#ECEEF2] border border-gray-200/80 overflow-hidden shadow-inner'}">
+          <!-- AREA KANTOR MENGGUNAKAN GAMBAR 'kantor.jpg' -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#E5E7EB]' : 'relative rounded-2xl h-[390px] bg-[#E5E7EB] border border-gray-200/80 overflow-hidden shadow-inner'}">
             
-            <!-- Gambar Latar Ruangan Kantor -->
-            <img src="high-angle-office-interior-design.jpg.jpg" alt="Kantor 3D" class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" />
+            <!-- Gambar Latar Belakang Kantor -->
+            <img src="kantor.jpg" alt="Kantor 3D" class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" />
 
             <!-- Bubble Teks Sinyal -->
             <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
               ${state.bubbleText}
             </div>
 
-            <!-- LABEL AGEN 1: ORACLE (Meja Kiri Atas) -->
+            <!-- LABEL AGEN 1: ORACLE -->
             <div class="agent-bob absolute top-[53%] left-[34%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10">
               <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 ORACLE <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL AGEN 2: SENTINEL (Meja Kanan Atas) -->
+            <!-- LABEL AGEN 2: SENTINEL -->
             <div class="agent-bob absolute top-[50%] left-[53%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.3s">
               <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 SENTINEL <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL AGEN 3: PHANTOM (Meja Kanan Bawah) -->
+            <!-- LABEL AGEN 3: PHANTOM -->
             <div class="agent-bob absolute top-[64%] left-[58%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.6s">
               <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 PHANTOM <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
               </div>
             </div>
 
-            <!-- LABEL AGEN 4: FINAL (Meja Kiri Bawah) -->
+            <!-- LABEL AGEN 4: FINAL -->
             <div class="agent-bob absolute top-[67%] left-[39%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10" style="animation-delay:0.9s">
               <div class="bg-black/95 text-white px-2 py-0.5 rounded-full text-[9px] font-bold shadow-lg flex items-center gap-1 border border-white/20">
                 FINAL <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
