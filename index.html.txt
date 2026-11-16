@@ -1,0 +1,24 @@
+<!port" content="width=device-width, initial-scale=1.0">
+  <title>Mini App JS</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 20px;">
+  <h2 id="nama">Memuat data...</h2>
+  <button id="tombolKirim" style="padding: 10px 20px;">Kirim Data ke Bot</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    // Menampilkan nama pengguna Telegram
+    const user = tg.initDataUnsafe?.user;
+    document.getElementById('nama').innerText = user ? `Halo, ${user.first_name}!` : 'Halo, Tamu!';
+
+    // Mengirim data balik ke chat bot saat tombol ditekan
+    document.getElementById('tombolKirim').addEventListener('click', () => {
+      tg.sendData("Pengguna menekan tombol di Mini App!");
+    });
+  </script>
+</body>
+</html>
