@@ -1,24 +1,308 @@
-<!port" content="width=device-width, initial-scale=1.0">
-  <title>Mini App JS</title>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ben Agent - Bot Trading</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { background-color: #E5E7EB; color: #18181B; font-family: 'Inter', sans-serif; margin: 0; }
+    @keyframes floatBubble { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+    @keyframes agentWork { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-2px); } }
+    .animate-bubble { animation: floatBubble 2.5s ease-in-out infinite; }
+    .agent-bob { animation: agentWork 2s ease-in-out infinite; }
+    .office-fullscreen { position: fixed !important; inset: 0 !important; z-index: 60 !important; width: 100vw !important; max-width: 440px !important; margin: 0 auto !important; height: 100dvh !important; border-radius: 0 !important; }
+  </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 20px;">
-  <h2 id="nama">Memuat data...</h2>
-  <button id="tombolKirim" style="padding: 10px 20px;">Kirim Data ke Bot</button>
+<body class="flex justify-center min-h-dvh">
+
+  <div class="relative w-full max-w-[440px] bg-[#F4F4F9] min-h-dvh flex flex-col shadow-xl overflow-x-hidden">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-[#F4F4F9]/95 backdrop-blur-md border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button id="back-btn" onclick="goBack()" class="hidden p-1 text-gray-700 rounded-lg hover:bg-gray-200">←</button>
+        <h1 id="page-title" class="text-[19px] font-bold tracking-tight">Ben Agent</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="live-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEE2E2] text-[#EF4444]">LIVE</span>
+        <button onclick="refreshData()" class="w-8 h-8 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-600 active:scale-95">↻</button>
+      </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main id="main-content" class="flex-1 px-3.5 pt-3 pb-24 space-y-3 overflow-y-auto"></main>
+
+    <!-- Toast Notifikasi -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 hidden bg-[#18181B] text-white px-4 py-2 rounded-xl text-xs font-medium shadow-lg"></div>
+
+    <!-- Navigasi Bawah 5 Tab -->
+    <nav class="fixed bottom-0 w-full max-w-[440px] z-40 bg-white border-t border-gray-200 px-2 py-2 grid grid-cols-5 gap-1">
+      <button onclick="switchTab('kantor')" data-tab="kantor" class="nav-btn flex flex-col items-center py-1 text-[#2563EB] font-semibold">
+        <span class="text-lg">🏠</span><span class="text-[11px]">Kantor</span>
+      </button>
+      <button onclick="switchTab('posisi')" data-tab="posisi" class="nav-btn flex flex-col items-center py-1 text-[#71717A]">
+        <span class="text-lg">📈</span><span class="text-[11px]">Posisi</span>
+      </button>
+      <button onclick="switchTab('kandidat')" data-tab="kandidat" class="nav-btn flex flex-col items-center py-1 text-[#71717A]">
+        <span class="text-lg">🛡️</span><span class="text-[11px]">Kandidat</span>
+      </button>
+      <button onclick="switchTab('setelan')" data-tab="setelan" class="nav-btn flex flex-col items-center py-1 text-[#71717A]">
+        <span class="text-lg">🎛️</span><span class="text-[11px]">Setelan</span>
+      </button>
+      <button onclick="switchTab('lainnya')" data-tab="lainnya" class="nav-btn flex flex-col items-center py-1 text-[#71717A]">
+        <span class="text-lg">•••</span><span class="text-[11px]">Lainnya</span>
+      </button>
+    </nav>
+  </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
 
-    // Menampilkan nama pengguna Telegram
-    const user = tg.initDataUnsafe?.user;
-    document.getElementById('nama').innerText = user ? `Halo, ${user.first_name}!` : 'Halo, Tamu!';
+    const state = {
+      tab: 'kantor',
+      posisiSub: 'terbuka',
+      selectedToken: null,
+      isFullscreen: false,
+      mode: 'Live',
+      strategy: 'sniper',
+      bubbleText: 'Sinyal baru: BUD',
+      wallets: [],
+      candidates: [
+        { id: 1, name: 'CYBRON', route: 'trending', mcap: '$45.0K', liq: '$8.8K', holder: '100', top20: '64%', score: '58.3', age: '4 mnt lalu', ca: '6J1fed2acj9b7v5XksBdEmh68EsY9r19zKsKdNJ749pump', conf: 22, reason: 'Batch #17 screened 3, no buy selected. Lifecycle extended with late_entry_risk & non-organic volume.' },
+        { id: 2, name: 'ok', route: 'trending', mcap: '$35.2K', liq: '$9.4K', holder: '142', top20: '51%', score: '63.7', age: '16 mnt lalu', ca: '9Q2wEr4tY6uI8oP0aS3dF5gH7jK9lZ1xC3vB5nM7pump', conf: 34, reason: 'Holder sehat, namun momentum 5m melambat di bawah ambang 0.5.' },
+        { id: 3, name: 'Naloong', route: 'graduated', mcap: '$27.5K', liq: '$8.1K', holder: '115', top20: '58%', score: '61.2', age: '17 mnt lalu', ca: '4Z6xCv8bN0mQ2wE4rT6yU8iO0pA2sD4fG6hJ8kL0pump', conf: 29, reason: 'Pool Raydium stabil, menunggu konfirmasi volume pembeli kedua.' },
+        { id: 4, name: 'NEVERDOOM', route: 'graduated', mcap: '$55.1K', liq: '$12.4K', holder: '218', top20: '46%', score: '68.4', age: '37 mnt lalu', ca: '2A4sDf6gH8jK0lZ2xC4vB6nM8qW0eR2tY4uI6oP8pump', conf: 38, reason: 'Likuiditas terkuat di batch ini ($12.4K), memantau level koreksi untuk entry.' }
+      ]
+    };
 
-    // Mengirim data balik ke chat bot saat tombol ditekan
-    document.getElementById('tombolKirim').addEventListener('click', () => {
-      tg.sendData("Pengguna menekan tombol di Mini App!");
-    });
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 2200);
+    }
+
+    function switchTab(t) {
+      state.tab = t;
+      state.selectedToken = null;
+      state.isFullscreen = false;
+      render();
+    }
+
+    function goBack() {
+      state.selectedToken = null;
+      render();
+    }
+
+    function refreshData() {
+      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi FINAL'];
+      state.bubbleText = signals[Math.floor(Math.random() * signals.length)];
+      toast('Data agen diperbarui');
+      render();
+    }
+
+    function render() {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const active = btn.dataset.tab === state.tab;
+        btn.className = `nav-btn flex flex-col items-center py-1 ${active ? 'text-[#2563EB] font-semibold' : 'text-[#71717A]'}`;
+      });
+
+      document.getElementById('back-btn').classList.toggle('hidden', !state.selectedToken);
+      const main = document.getElementById('main-content');
+
+      if (state.tab === 'kantor') {
+        main.innerHTML = `
+          <div class="bg-white rounded-2xl p-4 shadow-xs border border-gray-100">
+            <div class="flex justify-between items-center text-xs text-gray-500 mb-1">
+              <span>Kinerja hari ini</span>
+              <span class="flex items-center gap-1.5 text-emerald-600 font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>Agen aktif</span>
+            </div>
+            <div class="flex justify-between items-baseline mb-4">
+              <div class="text-3xl font-extrabold tracking-tight">+$0.00</div>
+              <div class="text-xs text-gray-400">24 jam +$0.00</div>
+            </div>
+            <div class="grid grid-cols-4 gap-2 pt-3 border-t border-gray-100 text-center">
+              <div><div class="text-[11px] text-gray-400">Mengambang</div><div class="font-bold text-sm">0</div></div>
+              <div><div class="text-[11px] text-gray-400">Posisi</div><div class="font-bold text-sm">0/3</div></div>
+              <div><div class="text-[11px] text-gray-400">Win rate</div><div class="font-bold text-sm">—</div></div>
+              <div><div class="text-[11px] text-gray-400">Trade</div><div class="font-bold text-sm">0</div></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
+              <span>⚡ Sinyal terakhir 3 dtk lalu</span>
+              <span>Sniper · LLM</span>
+            </div>
+          </div>
+
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEEF2]' : 'relative rounded-2xl h-[340px] bg-[#ECEEF2] border border-gray-200/80 overflow-hidden'}">
+            <svg viewBox="0 0 400 340" class="w-full h-full">
+              <polygon points="200,30 370,125 200,295 30,125" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+              <polygon points="30,125 200,295 200,312 30,142" fill="#CBD5E1"/>
+              <polygon points="370,125 200,295 200,312 370,142" fill="#94A3B8"/>
+              <polygon points="200,105 290,155 200,215 110,155" fill="#E2E8F0" opacity="0.7"/>
+              
+              <g class="agent-bob">
+                <rect x="85" y="110" width="46" height="24" rx="4" fill="#334155" transform="skewY(20)"/>
+                <circle cx="110" cy="112" r="9" fill="#3B82F6"/>
+                <rect x="82" y="88" width="56" height="18" rx="9" fill="#18181B"/>
+                <text x="110" y="100" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
+              </g>
+
+              <g class="agent-bob" style="animation-delay:0.4s">
+                <rect x="235" y="95" width="46" height="24" rx="4" fill="#334155" transform="skewY(-20)"/>
+                <circle cx="255" cy="108" r="9" fill="#F59E0B"/>
+                <rect x="225" y="84" width="60" height="18" rx="9" fill="#18181B"/>
+                <text x="255" y="96" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
+              </g>
+
+              <g class="agent-bob" style="animation-delay:0.8s">
+                <circle cx="295" cy="155" r="9" fill="#8B5CF6"/>
+                <rect x="265" y="132" width="60" height="18" rx="9" fill="#18181B"/>
+                <text x="295" y="144" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
+              </g>
+
+              <g class="agent-bob" style="animation-delay:1.2s">
+                <rect x="175" y="215" width="50" height="26" rx="4" fill="#1E293B"/>
+                <circle cx="200" cy="212" r="10" fill="#10B981"/>
+                <rect x="172" y="188" width="56" height="18" rx="9" fill="#18181B"/>
+                <text x="200" y="200" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
+              </g>
+            </svg>
+
+            <div class="animate-bubble absolute top-7 left-6 bg-white px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800">
+              ${state.bubbleText}
+            </div>
+
+            <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-white/95 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-200">
+              ${state.isFullscreen ? '✕ Tutup' : '⛶ Layar penuh'}
+            </button>
+          </div>
+        `;
+      } else if (state.tab === 'posisi') {
+        main.innerHTML = `
+          <div class="bg-gray-200/80 p-1 rounded-xl grid grid-cols-2 gap-1">
+            <button onclick="state.posisiSub='terbuka'; render()" class="py-2 rounded-lg text-xs font-semibold ${state.posisiSub==='terbuka' ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">Terbuka</button>
+            <button onclick="state.posisiSub='ditutup'; render()" class="py-2 rounded-lg text-xs font-semibold ${state.posisiSub==='ditutup' ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">Ditutup</button>
+          </div>
+          <div class="bg-white rounded-2xl p-10 text-center text-sm text-gray-400 border border-gray-100">
+            ${state.posisiSub === 'terbuka' ? 'Tidak ada posisi terbuka.' : 'Belum ada posisi yang ditutup.'}
+          </div>
+        `;
+      } else if (state.tab === 'kandidat') {
+        if (state.selectedToken) {
+          const t = state.selectedToken;
+          main.innerHTML = `
+            <div class="bg-white rounded-2xl p-4 space-y-3 border border-gray-100">
+              <div>
+                <h2 class="text-lg font-extrabold">${t.name} · ${t.name.toUpperCase()}</h2>
+                <p class="text-[11px] text-gray-400 break-all font-mono mt-0.5">${t.ca}</p>
+              </div>
+              <div class="divide-y divide-gray-100 text-sm">
+                <div class="py-2 flex justify-between"><span class="text-gray-500">Rute</span><span class="font-semibold">${t.route}</span></div>
+                <div class="py-2 flex justify-between"><span class="text-gray-500">Mcap</span><span class="font-semibold">${t.mcap}</span></div>
+                <div class="py-2 flex justify-between"><span class="text-gray-500">Likuiditas</span><span class="font-semibold">${t.liq}</span></div>
+                <div class="py-2 flex justify-between"><span class="text-gray-500">Holder</span><span class="font-semibold">${t.holder} · top20 ${t.top20}</span></div>
+                <div class="py-2 flex justify-between"><span class="text-gray-500">Skor intel</span><span class="font-semibold">${t.score}</span></div>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 space-y-2 border border-gray-100">
+              <div class="text-xs font-bold text-gray-400 uppercase">Keputusan AI</div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-700">WATCH</span>
+                <span class="text-xs text-gray-500">confidence ${t.conf}% · ${t.age}</span>
+              </div>
+              <p class="text-xs text-gray-600 leading-relaxed pt-1">${t.reason}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="https://gmgn.ai/sol/token/${t.ca}" target="_blank" class="bg-white border border-gray-200 py-3 rounded-xl text-center text-sm font-bold text-[#2563EB]">GMGN ↗</a>
+              <button onclick="goBack(); toast('Token diabaikan')" class="bg-white border border-gray-200 py-3 rounded-xl text-sm font-bold text-gray-700">Abaikan</button>
+            </div>
+            <button onclick="toast('Order Beli dikirim ke eksekutor!')" class="w-full bg-[#10B981] text-white py-3.5 rounded-xl font-bold text-sm shadow-sm">Beli (LIVE)</button>
+          `;
+        } else {
+          main.innerHTML = state.candidates.map(c => `
+            <div onclick="state.selectedToken = state.candidates.find(x => x.id === ${c.id}); render();" class="bg-white rounded-2xl p-3.5 border border-gray-100 flex justify-between items-center active:bg-gray-50 cursor-pointer">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-sm">${c.name}</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">WATCH</span>
+                </div>
+                <div class="text-xs text-gray-400 mt-1">${c.route} · ${c.mcap} · ${c.age}</div>
+              </div>
+              <span class="text-gray-300 text-lg">›</span>
+            </div>
+          `).join('');
+        }
+      } else if (state.tab === 'setelan') {
+        main.innerHTML = `
+          <div class="bg-gray-200/80 p-1 rounded-xl grid grid-cols-3 gap-1">
+            ${['Dry-run', 'Konfirmasi', 'Live'].map(m => `
+              <button onclick="state.mode='${m}'; toast('Mode diubah ke ${m}'); render()" class="py-2 rounded-lg text-xs font-semibold ${state.mode===m ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">${m}</button>
+            `).join('')}
+          </div>
+          <div class="text-xs font-bold text-gray-400 uppercase pt-2">Strategi Aktif</div>
+          <div class="bg-white rounded-2xl divide-y divide-gray-100 border border-gray-100">
+            ${[{id: 'degen', name: 'Degen'}, {id: 'dip_buy', name: 'Dip Buy'}, {id: 'smart_money', name: 'Smart Money'}, {id: 'sniper', name: 'Sniper'}].map(s => `
+              <div onclick="state.strategy='${s.id}'; toast('Strategi ${s.name} aktif'); render()" class="p-3.5 flex justify-between items-center cursor-pointer">
+                <div>
+                  <div class="font-bold text-sm flex items-center gap-2">
+                    ${s.name}
+                    ${state.strategy===s.id ? '<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-700">AKTIF</span>' : ''}
+                  </div>
+                  <div class="text-xs text-gray-400">${s.id}</div>
+                </div>
+                <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center ${state.strategy===s.id ? 'border-[#2563EB]' : 'border-gray-300'}">
+                  ${state.strategy===s.id ? '<div class="w-2 h-2 rounded-full bg-[#2563EB]"></div>' : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="bg-white rounded-2xl p-4 space-y-3 border border-gray-100">
+            <div class="text-xs font-bold text-gray-400 uppercase">Ukuran & Exit</div>
+            <div class="flex justify-between items-center text-sm"><span>Ukuran posisi ($)</span><input type="text" value="6,79" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
+            <div class="flex justify-between items-center text-sm"><span>Take profit (%)</span><input type="number" value="25" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
+            <div class="flex justify-between items-center text-sm"><span>Stop loss (%)</span><input type="number" value="-15" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
+          </div>
+        `;
+      } else if (state.tab === 'lainnya') {
+        main.innerHTML = `
+          <div class="bg-white rounded-2xl divide-y divide-gray-100 border border-gray-100">
+            <div onclick="toast('Brief 24 jam dimuat')" class="p-3.5 flex justify-between items-center cursor-pointer">
+              <div><div class="font-bold text-sm">Brief 24 jam</div><div class="text-xs text-gray-400">Kandidat, keputusan, trade, risiko</div></div><span>›</span>
+            </div>
+            <div onclick="toast('Laporan harian dikirim ke chat!')" class="p-3.5 flex justify-between items-center cursor-pointer">
+              <div><div class="font-bold text-sm text-[#2563EB]">Kirim laporan harian ke chat</div><div class="text-xs text-gray-400">Kartu ringkasan hari ini</div></div><span>›</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 space-y-3 border border-gray-100">
+            <div class="font-bold text-sm">Wallet Pantauan (${state.wallets.length})</div>
+            <input id="w-label" type="text" placeholder="Label (mis. whale1)" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
+            <input id="w-addr" type="text" placeholder="Alamat Solana" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
+            <button onclick="addWallet()" class="w-full bg-[#2563EB] text-white py-2.5 rounded-xl text-sm font-bold">Simpan</button>
+            <div class="space-y-1 pt-1">
+              ${state.wallets.map(w => `<div class="text-xs bg-gray-50 p-2 rounded-lg flex justify-between"><b>${w.label}</b><span class="font-mono text-gray-400">${w.addr.slice(0,8)}...</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function addWallet() {
+      const label = document.getElementById('w-label').value.trim();
+      const addr = document.getElementById('w-addr').value.trim();
+      if (!label || !addr) return toast('Isi label dan alamat Solana dulu');
+      state.wallets.push({ label, addr });
+      toast('Wallet pantauan disimpan');
+      render();
+    }
+
+    render();
   </script>
 </body>
 </html>
