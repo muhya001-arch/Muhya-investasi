@@ -140,62 +140,87 @@
             </div>
           </div>
 
-          <!-- KANTOR 3D DENGAN LAYOUT POSISI YANG DISEMPURNAKAN -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#F1F3F6]' : 'relative rounded-2xl h-[370px] bg-[#F1F3F6] border border-gray-200/80 overflow-hidden'}">
-            <svg viewBox="0 0 400 370" class="w-full h-full">
-              <!-- Lantai & Dinding Ruangan 3D yang Proporsional -->
-              <polygon points="200,15 385,115 200,315 15,115" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
-              <polyline points="15,115 200,315 385,115" fill="none" stroke="#94A3B8" stroke-width="2"/>
-              <line x1="200" y1="15" x2="200" y2="315" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4"/>
+          <!-- RUANG KANTOR 3D LENGKAP DENGAN FURNITUR & TATA LETAK RUANGAN -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEFF2]' : 'relative rounded-2xl h-[380px] bg-[#ECEFF2] border border-gray-200/80 overflow-hidden'}">
+            <svg viewBox="0 0 400 380" class="w-full h-full">
+              <!-- Dinding Belakang & Lantai Isometrik -->
+              <polygon points="50,45 350,45 350,335 50,335" fill="#F8FAFC"/>
+              <line x1="50" y1="45" x2="350" y2="45" stroke="#CBD5E1" stroke-width="2"/>
+              <line x1="50" y1="45" x2="50" y2="335" stroke="#CBD5E1" stroke-width="2"/>
 
-              <!-- Hiasan Tanaman Sudut Ruangan -->
-              <ellipse cx="345" cy="140" rx="10" ry="7" fill="#10B981" opacity="0.9"/>
-              <circle cx="345" cy="135" r="7" fill="#059669"/>
-              <ellipse cx="55" cy="215" rx="10" ry="7" fill="#10B981" opacity="0.9"/>
-              <circle cx="55" cy="210" r="7" fill="#059669"/>
+              <!-- Sekat / Partisi Dinding Ruangan Tambahan -->
+              <path d="M210,180 L290,260 L290,300" fill="none" stroke="#CBD5E1" stroke-width="2"/>
 
-              <!-- AGENT 1: ORACLE (Kiri) -->
+              <!-- Rak / Lemari Arsip di Sudut Atas -->
+              <rect x="230" y="55" width="60" height="20" rx="2" fill="#334155"/>
+              <rect x="245" y="58" width="30" height="14" fill="#64748B"/>
+
+              <!-- Tanaman Hias 1 (Kiri Atas) -->
+              <circle cx="85" cy="90" r="11" fill="#10B981"/>
+              <rect x="82" y="98" width="6" height="8" fill="#94A3B8"/>
+
+              <!-- Tanaman Hias 2 (Kanan Tengah) -->
+              <circle cx="310" cy="180" r="11" fill="#10B981"/>
+              <rect x="307" y="188" width="6" height="8" fill="#94A3B8"/>
+
+              <!-- MEJA & KURSI 1: ORACLE -->
               <g class="agent-bob">
-                <rect x="85" y="130" width="50" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="98" y="118" width="24" height="13" rx="1" fill="#64748B"/>
-                <rect x="101" y="120" width="18" height="9" fill="#38BDF8"/>
-                <ellipse cx="110" cy="165" rx="9" ry="5" fill="#475569"/>
-                <circle cx="110" cy="160" r="7.5" fill="#3B82F6"/>
-                <rect x="80" y="100" width="60" height="15" rx="7.5" fill="#18181B"/>
-                <text x="110" y="110" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
+                <!-- Meja Kerja -->
+                <rect x="95" y="130" width="55" height="26" rx="2" fill="#334155" stroke="#1E293B"/>
+                <!-- Monitor Komputer -->
+                <rect x="110" y="115" width="24" height="14" rx="1" fill="#64748B"/>
+                <rect x="113" y="117" width="18" height="10" fill="#38BDF8"/>
+                <!-- Kursi & Karakter Agen -->
+                <ellipse cx="122" cy="168" rx="9" ry="5" fill="#475569"/>
+                <circle cx="122" cy="163" r="8" fill="#3B82F6"/>
+                <!-- Label Nama -->
+                <rect x="92" y="95" width="60" height="16" rx="8" fill="#18181B"/>
+                <text x="122" y="106" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
               </g>
 
-              <!-- AGENT 2: SENTINEL (Atas/Kanan) -->
+              <!-- MEJA & KURSI 2: SENTINEL -->
               <g class="agent-bob" style="animation-delay:0.3s">
-                <rect x="250" y="110" width="50" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="263" y="98" width="24" height="13" rx="1" fill="#64748B"/>
-                <rect x="266" y="100" width="18" height="9" fill="#38BDF8"/>
-                <ellipse cx="275" cy="145" rx="9" ry="5" fill="#475569"/>
-                <circle cx="275" cy="140" r="7.5" fill="#F59E0B"/>
-                <rect x="245" y="80" width="60" height="15" rx="7.5" fill="#18181B"/>
-                <text x="275" y="90" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
+                <!-- Meja Kerja -->
+                <rect x="230" y="110" width="55" height="26" rx="2" fill="#334155" stroke="#1E293B"/>
+                <!-- Monitor Komputer -->
+                <rect x="245" y="95" width="24" height="14" rx="1" fill="#64748B"/>
+                <rect x="248" y="97" width="18" height="10" fill="#38BDF8"/>
+                <!-- Kursi & Karakter Agen -->
+                <ellipse cx="257" cy="148" rx="9" ry="5" fill="#475569"/>
+                <circle cx="257" cy="143" r="8" fill="#F59E0B"/>
+                <!-- Label Nama -->
+                <rect x="227" y="75" width="60" height="16" rx="8" fill="#18181B"/>
+                <text x="257" y="86" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
               </g>
 
-              <!-- AGENT 3: PHANTOM (Kanan Bawah) -->
+              <!-- MEJA & KURSI 3: PHANTOM -->
               <g class="agent-bob" style="animation-delay:0.6s">
-                <rect x="265" y="210" width="50" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="278" y="198" width="24" height="13" rx="1" fill="#64748B"/>
-                <rect x="281" y="200" width="18" height="9" fill="#38BDF8"/>
-                <ellipse cx="290" cy="245" rx="9" ry="5" fill="#475569"/>
-                <circle cx="290" cy="240" r="7.5" fill="#8B5CF6"/>
-                <rect x="260" y="180" width="60" height="15" rx="7.5" fill="#18181B"/>
-                <text x="290" y="190" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
+                <!-- Meja Kerja -->
+                <rect x="260" y="210" width="55" height="26" rx="2" fill="#334155" stroke="#1E293B"/>
+                <!-- Monitor Komputer -->
+                <rect x="275" y="195" width="24" height="14" rx="1" fill="#64748B"/>
+                <rect x="278" y="197" width="18" height="10" fill="#38BDF8"/>
+                <!-- Kursi & Karakter Agen -->
+                <ellipse cx="287" cy="248" rx="9" ry="5" fill="#475569"/>
+                <circle cx="287" cy="243" r="8" fill="#8B5CF6"/>
+                <!-- Label Nama -->
+                <rect x="257" y="175" width="60" height="16" rx="8" fill="#18181B"/>
+                <text x="287" y="186" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
               </g>
 
-              <!-- AGENT 4: FINAL (Bawah Tengah) -->
+              <!-- MEJA & KURSI 4: FINAL -->
               <g class="agent-bob" style="animation-delay:0.9s">
-                <rect x="175" y="225" width="50" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
-                <rect x="188" y="213" width="24" height="13" rx="1" fill="#64748B"/>
-                <rect x="191" y="215" width="18" height="9" fill="#38BDF8"/>
-                <ellipse cx="200" cy="260" rx="9" ry="5" fill="#475569"/>
-                <circle cx="200" cy="255" r="7.5" fill="#10B981"/>
-                <rect x="170" y="195" width="60" height="15" rx="7.5" fill="#18181B"/>
-                <text x="200" y="205" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
+                <!-- Meja Kerja -->
+                <rect x="150" y="250" width="55" height="26" rx="2" fill="#334155" stroke="#1E293B"/>
+                <!-- Monitor Komputer -->
+                <rect x="165" y="235" width="24" height="14" rx="1" fill="#64748B"/>
+                <rect x="168" y="237" width="18" height="10" fill="#38BDF8"/>
+                <!-- Kursi & Karakter Agen -->
+                <ellipse cx="177" cy="288" rx="9" ry="5" fill="#475569"/>
+                <circle cx="177" cy="283" r="8" fill="#10B981"/>
+                <!-- Label Nama -->
+                <rect x="147" y="215" width="60" height="16" rx="8" fill="#18181B"/>
+                <text x="177" y="226" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
               </g>
             </svg>
 
