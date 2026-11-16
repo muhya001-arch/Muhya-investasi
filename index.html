@@ -72,13 +72,11 @@
       isFullscreen: false,
       mode: 'Live',
       strategy: 'sniper',
-      bubbleText: 'Sinyal baru: BUD',
+      bubbleText: 'Sinyal baru: TURN',
       wallets: [],
       candidates: [
-        { id: 1, name: 'CYBRON', route: 'trending', mcap: '$45.0K', liq: '$8.8K', holder: '100', top20: '64%', score: '58.3', age: '4 mnt lalu', ca: '6J1fed2acj9b7v5XksBdEmh68EsY9r19zKsKdNJ749pump', conf: 22, reason: 'Batch #17 screened 3, no buy selected. Lifecycle extended with late_entry_risk & non-organic volume.' },
-        { id: 2, name: 'ok', route: 'trending', mcap: '$35.2K', liq: '$9.4K', holder: '142', top20: '51%', score: '63.7', age: '16 mnt lalu', ca: '9Q2wEr4tY6uI8oP0aS3dF5gH7jK9lZ1xC3vB5nM7pump', conf: 34, reason: 'Holder sehat, namun momentum 5m melambat di bawah ambang 0.5.' },
-        { id: 3, name: 'Naloong', route: 'graduated', mcap: '$27.5K', liq: '$8.1K', holder: '115', top20: '58%', score: '61.2', age: '17 mnt lalu', ca: '4Z6xCv8bN0mQ2wE4rT6yU8iO0pA2sD4fG6hJ8kL0pump', conf: 29, reason: 'Pool Raydium stabil, menunggu konfirmasi volume pembeli kedua.' },
-        { id: 4, name: 'NEVERDOOM', route: 'graduated', mcap: '$55.1K', liq: '$12.4K', holder: '218', top20: '46%', score: '68.4', age: '37 mnt lalu', ca: '2A4sDf6gH8jK0lZ2xC4vB6nM8qW0eR2tY4uI6oP8pump', conf: 38, reason: 'Likuiditas terkuat di batch ini ($12.4K), memantau level koreksi untuk entry.' }
+        { id: 1, name: 'TURN', route: 'trending', mcap: '$45.0K', liq: '$8.8K', holder: '100', top20: '64%', score: '58.3', age: '4 mnt lalu', ca: 'qay6c14bea8Y2ebCYwDpNtMqxEE27WZFJELKPQ6cGTA', conf: 22, reason: 'Screened active pool, volume stabil dengan likuiditas memadai.' },
+        { id: 2, name: 'CYBRON', route: 'trending', mcap: '$35.2K', liq: '$9.4K', holder: '142', top20: '51%', score: '63.7', age: '16 mnt lalu', ca: '6J1fed2acj9b7v5XksBdEmh68EsY9r19zKsKdNJ749pump', conf: 34, reason: 'Holder sehat, momentum 5m aktif.' }
       ]
     };
 
@@ -102,7 +100,7 @@
     }
 
     function refreshData() {
-      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi FINAL'];
+      const signals = ['Sinyal baru: TURN', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi FINAL'];
       state.bubbleText = signals[Math.floor(Math.random() * signals.length)];
       toast('Data agen diperbarui');
       render();
@@ -125,14 +123,14 @@
               <span class="flex items-center gap-1.5 text-emerald-600 font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>Agen aktif</span>
             </div>
             <div class="flex justify-between items-baseline mb-4">
-              <div class="text-3xl font-extrabold tracking-tight">+$0.00</div>
-              <div class="text-xs text-gray-400">24 jam +$0.00</div>
+              <div class="text-3xl font-extrabold tracking-tight">+$14.20</div>
+              <div class="text-xs text-emerald-600 font-bold">24 jam +18.4%</div>
             </div>
             <div class="grid grid-cols-4 gap-2 pt-3 border-t border-gray-100 text-center">
-              <div><div class="text-[11px] text-gray-400">Mengambang</div><div class="font-bold text-sm">0</div></div>
-              <div><div class="text-[11px] text-gray-400">Posisi</div><div class="font-bold text-sm">0/3</div></div>
-              <div><div class="text-[11px] text-gray-400">Win rate</div><div class="font-bold text-sm">—</div></div>
-              <div><div class="text-[11px] text-gray-400">Trade</div><div class="font-bold text-sm">0</div></div>
+              <div><div class="text-[11px] text-gray-400">Mengambang</div><div class="font-bold text-sm text-emerald-600">+$3.5</div></div>
+              <div><div class="text-[11px] text-gray-400">Posisi</div><div class="font-bold text-sm">1/3</div></div>
+              <div><div class="text-[11px] text-gray-400">Win rate</div><div class="font-bold text-sm">75%</div></div>
+              <div><div class="text-[11px] text-gray-400">Trade</div><div class="font-bold text-sm">4</div></div>
             </div>
             <div class="flex justify-between text-[11px] text-gray-400 mt-3 pt-2 border-t border-gray-50">
               <span>⚡ Sinyal terakhir 3 dtk lalu</span>
@@ -190,9 +188,15 @@
             <button onclick="state.posisiSub='terbuka'; render()" class="py-2 rounded-lg text-xs font-semibold ${state.posisiSub==='terbuka' ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">Terbuka</button>
             <button onclick="state.posisiSub='ditutup'; render()" class="py-2 rounded-lg text-xs font-semibold ${state.posisiSub==='ditutup' ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">Ditutup</button>
           </div>
-          <div class="bg-white rounded-2xl p-10 text-center text-sm text-gray-400 border border-gray-100">
-            ${state.posisiSub === 'terbuka' ? 'Tidak ada posisi terbuka.' : 'Belum ada posisi yang ditutup.'}
-          </div>
+          ${state.posisiSub === 'terbuka' ? `
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 space-y-2">
+              <div class="flex justify-between items-center"><span class="font-bold text-sm">TURN / SOL</span><span class="text-xs text-emerald-600 font-bold">+$3.5 (+15%)</span></div>
+              <div class="text-xs text-gray-400">Modal: $6.79 · Entry: $0.0042</div>
+              <button onclick="toast('Posisi ditutup berhasil!')" class="w-full bg-red-50 text-red-600 py-2 rounded-xl text-xs font-bold mt-2">Tutup Posisi</button>
+            </div>
+          ` : `
+            <div class="bg-white rounded-2xl p-6 text-center text-xs text-gray-400 border border-gray-100">3 trade sukses minggu ini.</div>
+          `}
         `;
       } else if (state.tab === 'kandidat') {
         if (state.selectedToken) {
@@ -214,7 +218,7 @@
             <div class="bg-white rounded-2xl p-4 space-y-2 border border-gray-100">
               <div class="text-xs font-bold text-gray-400 uppercase">Keputusan AI</div>
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-700">WATCH</span>
+                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-100 text-emerald-700">READY</span>
                 <span class="text-xs text-gray-500">confidence ${t.conf}% · ${t.age}</span>
               </div>
               <p class="text-xs text-gray-600 leading-relaxed pt-1">${t.reason}</p>
@@ -223,7 +227,7 @@
               <a href="https://gmgn.ai/sol/token/${t.ca}" target="_blank" class="bg-white border border-gray-200 py-3 rounded-xl text-center text-sm font-bold text-[#2563EB]">GMGN ↗</a>
               <button onclick="goBack(); toast('Token diabaikan')" class="bg-white border border-gray-200 py-3 rounded-xl text-sm font-bold text-gray-700">Abaikan</button>
             </div>
-            <button onclick="toast('Order Beli dikirim ke eksekutor!')" class="w-full bg-[#10B981] text-white py-3.5 rounded-xl font-bold text-sm shadow-sm">Beli (LIVE)</button>
+            <button onclick="toast('Order Beli dieksekusi ke bot Telegram!')" class="w-full bg-[#10B981] text-white py-3.5 rounded-xl font-bold text-sm shadow-sm">Beli (LIVE)</button>
           `;
         } else {
           main.innerHTML = state.candidates.map(c => `
@@ -231,7 +235,7 @@
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-sm">${c.name}</span>
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">WATCH</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">READY</span>
                 </div>
                 <div class="text-xs text-gray-400 mt-1">${c.route} · ${c.mcap} · ${c.age}</div>
               </div>
@@ -265,7 +269,7 @@
           </div>
           <div class="bg-white rounded-2xl p-4 space-y-3 border border-gray-100">
             <div class="text-xs font-bold text-gray-400 uppercase">Ukuran & Exit</div>
-            <div class="flex justify-between items-center text-sm"><span>Ukuran posisi ($)</span><input type="text" value="6,79" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
+            <div class="flex justify-between items-center text-sm"><span>Ukuran posisi ($)</span><input type="text" value="6.79" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
             <div class="flex justify-between items-center text-sm"><span>Take profit (%)</span><input type="number" value="25" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
             <div class="flex justify-between items-center text-sm"><span>Stop loss (%)</span><input type="number" value="-15" class="w-24 text-right bg-gray-100 rounded-lg px-2.5 py-1.5 font-semibold"/></div>
           </div>
