@@ -140,47 +140,67 @@
             </div>
           </div>
 
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#ECEEF2]' : 'relative rounded-2xl h-[340px] bg-[#ECEEF2] border border-gray-200/80 overflow-hidden'}">
-            <svg viewBox="0 0 400 340" class="w-full h-full">
-              <polygon points="200,30 370,125 200,295 30,125" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
-              <polygon points="30,125 200,295 200,312 30,142" fill="#CBD5E1"/>
-              <polygon points="370,125 200,295 200,312 370,142" fill="#94A3B8"/>
-              <polygon points="200,105 290,155 200,215 110,155" fill="#E2E8F0" opacity="0.7"/>
-              
+          <!-- TAMPILAN KANTOR 3D BARU -->
+          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-[#F1F3F6]' : 'relative rounded-2xl h-[360px] bg-[#F1F3F6] border border-gray-200/80 overflow-hidden'}">
+            <svg viewBox="0 0 400 360" class="w-full h-full">
+              <!-- Lantai Ruangan & Dinding Sudut -->
+              <polygon points="200,20 380,110 200,300 20,110" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+              <polyline points="20,110 200,300 380,110" fill="none" stroke="#94A3B8" stroke-width="2"/>
+              <line x1="200" y1="20" x2="200" y2="300" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4"/>
+
+              <!-- Aset Tanaman Hias Sudut Ruangan -->
+              <circle cx="340" cy="140" r="10" fill="#10B981" opacity="0.8"/>
+              <circle cx="70" cy="220" r="10" fill="#10B981" opacity="0.8"/>
+
+              <!-- SEKRETARIAT / MEJA 1 (ORACLE) -->
               <g class="agent-bob">
-                <rect x="85" y="110" width="46" height="24" rx="4" fill="#334155" transform="skewY(20)"/>
-                <circle cx="110" cy="112" r="9" fill="#3B82F6"/>
-                <rect x="82" y="88" width="56" height="18" rx="9" fill="#18181B"/>
-                <text x="110" y="100" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
+                <rect x="105" y="115" width="48" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
+                <rect x="115" y="105" width="22" height="12" rx="1" fill="#64748B"/>
+                <circle cx="128" cy="138" r="7" fill="#3B82F6"/>
+                <!-- Label Nama Agent -->
+                <rect x="98" y="90" width="60" height="16" rx="8" fill="#18181B"/>
+                <text x="128" y="101" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">ORACLE 🔵</text>
               </g>
 
-              <g class="agent-bob" style="animation-delay:0.4s">
-                <rect x="235" y="95" width="46" height="24" rx="4" fill="#334155" transform="skewY(-20)"/>
-                <circle cx="255" cy="108" r="9" fill="#F59E0B"/>
-                <rect x="225" y="84" width="60" height="18" rx="9" fill="#18181B"/>
-                <text x="255" y="96" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
+              <!-- SEKRETARIAT / MEJA 2 (SENTINEL) -->
+              <g class="agent-bob" style="animation-delay:0.3s">
+                <rect x="235" y="130" width="48" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
+                <rect x="245" y="120" width="22" height="12" rx="1" fill="#64748B"/>
+                <circle cx="258" cy="153" r="7" fill="#F59E0B"/>
+                <!-- Label Nama Agent -->
+                <rect x="228" y="105" width="62" height="16" rx="8" fill="#18181B"/>
+                <text x="259" y="116" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">SENTINEL 🟡</text>
               </g>
 
-              <g class="agent-bob" style="animation-delay:0.8s">
-                <circle cx="295" cy="155" r="9" fill="#8B5CF6"/>
-                <rect x="265" y="132" width="60" height="18" rx="9" fill="#18181B"/>
-                <text x="295" y="144" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
+              <!-- SEKRETARIAT / MEJA 3 (PHANTOM) -->
+              <g class="agent-bob" style="animation-delay:0.6s">
+                <rect x="280" y="195" width="48" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
+                <rect x="290" y="185" width="22" height="12" rx="1" fill="#64748B"/>
+                <circle cx="304" cy="218" r="7" fill="#8B5CF6"/>
+                <!-- Label Nama Agent -->
+                <rect x="273" y="170" width="62" height="16" rx="8" fill="#18181B"/>
+                <text x="304" y="181" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">PHANTOM 🟣</text>
               </g>
 
-              <g class="agent-bob" style="animation-delay:1.2s">
-                <rect x="175" y="215" width="50" height="26" rx="4" fill="#1E293B"/>
-                <circle cx="200" cy="212" r="10" fill="#10B981"/>
-                <rect x="172" y="188" width="56" height="18" rx="9" fill="#18181B"/>
-                <text x="200" y="200" fill="#FFF" font-size="8" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
+              <!-- SEKRETARIAT / MEJA 4 (FINAL) -->
+              <g class="agent-bob" style="animation-delay:0.9s">
+                <rect x="160" y="225" width="48" height="26" rx="3" fill="#334155" stroke="#1E293B"/>
+                <rect x="170" y="215" width="22" height="12" rx="1" fill="#64748B"/>
+                <circle cx="184" cy="248" r="7" fill="#10B981"/>
+                <!-- Label Nama Agent -->
+                <rect x="155" y="200" width="58" height="16" rx="8" fill="#18181B"/>
+                <text x="184" y="211" fill="#FFF" font-size="7.5" font-weight="bold" text-anchor="middle">FINAL 🟢</text>
               </g>
             </svg>
 
-            <div class="animate-bubble absolute top-7 left-6 bg-white px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800">
+            <!-- Bubble Teks Sinyal -->
+            <div class="animate-bubble absolute top-4 left-5 bg-white px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800">
               ${state.bubbleText}
             </div>
 
+            <!-- Tombol Fullscreen -->
             <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-white/95 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-200">
-              ${state.isFullscreen ? '✕ Tutup' : '⛶ Layar penuh'}
+              ${state.isFullscreen ? '✕ Tutup layar penuh' : '⛶ Layar penuh'}
             </button>
           </div>
         `;
