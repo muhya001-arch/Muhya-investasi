@@ -10,11 +10,6 @@
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     body { background-color: #E5E7EB; color: #18181B; font-family: 'Inter', sans-serif; margin: 0; }
-    @keyframes floatBubble { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
-    @keyframes agentWork { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-2px); } }
-    .animate-bubble { animation: floatBubble 2.5s ease-in-out infinite; }
-    .agent-bob { animation: agentWork 2s ease-in-out infinite; }
-    .office-fullscreen { position: fixed !important; inset: 0 !important; z-index: 60 !important; width: 100vw !important; max-width: 440px !important; margin: 0 auto !important; height: 100dvh !important; border-radius: 0 !important; }
   </style>
 </head>
 <body class="flex justify-center min-h-dvh">
@@ -102,7 +97,7 @@
     }
 
     function refreshData() {
-      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi ORACLE'];
+      const signals = ['Sinyal baru: BUD', 'Cek layar: CYBRON', 'Audit likuiditas OK', 'Menunggu konfirmasi FINAL'];
       state.bubbleText = signals[Math.floor(Math.random() * signals.length)];
       toast('Data agen diperbarui');
       render();
@@ -140,38 +135,36 @@
             </div>
           </div>
 
-          <!-- RUANG KANTOR DENGAN 1 ORANG AGEN -->
-          <div id="office-box" class="${state.isFullscreen ? 'office-fullscreen bg-gradient-to-br from-slate-100 to-amber-50' : 'relative rounded-2xl h-[390px] bg-gradient-to-br from-slate-100 to-amber-50 border border-gray-200/80 overflow-hidden shadow-inner flex items-center justify-center'}">
+          <!-- KANTOR VISUALISASI CRAB AGENT (LLM PIPELINE) -->
+          <div id="office-box" class="${state.isFullscreen ? 'fixed inset-0 z-50 w-full max-w-[440px] mx-auto h-[100dvh] bg-[#020a08]' : 'relative rounded-2xl h-[390px] bg-[#020a08] border border-gray-800 overflow-hidden shadow-inner'}">
             
-            <!-- Meja Kantor Tunggal -->
-            <div class="relative w-[240px] h-[180px] bg-amber-50/90 border border-amber-200/80 rounded-2xl shadow-md p-4 flex flex-col items-center justify-center">
-              
-              <!-- Rak Arsip Mini di Atas Meja -->
-              <div class="absolute -top-5 bg-amber-800 text-white text-[9px] px-3 py-0.5 rounded shadow font-bold">
-                🗄️ RUANG KERJA ORACLE
-              </div>
-
-              <!-- ORACLE (1 Orang Agen) -->
-              <div class="agent-bob flex flex-col items-center bg-white/95 backdrop-blur px-5 py-3 rounded-2xl shadow-lg border border-blue-200">
-                <span class="text-2xl">💻</span>
-                <span class="text-xs font-extrabold text-blue-600 mt-1">ORACLE 🔵</span>
-                <span class="flex items-center gap-1.5 text-[10px] text-emerald-600 font-medium mt-1">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Memindai pasar...
-                </span>
-              </div>
-            </div>
-
-            <!-- Bubble Teks Sinyal -->
-            <div class="animate-bubble absolute top-3 left-3 bg-white/95 px-3 py-1.5 rounded-xl shadow-md border border-gray-200 text-xs font-bold text-gray-800 z-20 backdrop-blur-sm">
-              ${state.bubbleText}
-            </div>
+            <canvas id="crab-canvas" class="w-full h-full block cursor-pointer"></canvas>
 
             <!-- Tombol Layar Penuh -->
-            <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-white/95 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-200 z-30 backdrop-blur-sm">
+            <button onclick="state.isFullscreen = !state.isFullscreen; render();" class="absolute bottom-3 right-3 bg-black/80 text-white px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm border border-gray-700 z-30 backdrop-blur-sm">
               ${state.isFullscreen ? '✕ Tutup layar penuh' : '⛶ Layar penuh'}
             </button>
           </div>
         `;
+
+        // Mount CrabAgent setelah elemen kanvas selesai dirender
+        setTimeout(() => {
+          const cvs = document.getElementById('crab-canvas');
+          if (cvs && window.CrabAgent) {
+            CrabAgent.mount(cvs);
+            CrabAgent.setData(
+              { positions: [], risk: { level: "normal", max_daily_loss_usd: 40 }, performance: { total_pnl_usd: 0 } },
+              {
+                feed: [
+                  { kind: "screen", text: "LLM screening pools discovery lp_score 88", ts: Date.now() },
+                  { kind: "deploy", text: "LLM automated strategy active", ts: Date.now() - 4000 }
+                ],
+                tasks: [{ busy: true, doing: "LLM pipeline analyzing pools...", key: "LLM_SCOUT" }]
+              }
+            );
+          }
+        }, 50);
+
       } else if (state.tab === 'posisi') {
         main.innerHTML = `
           <div class="bg-gray-200/80 p-1 rounded-xl grid grid-cols-2 gap-1">
@@ -231,16 +224,17 @@
         main.innerHTML = `
           <div class="bg-gray-200/80 p-1 rounded-xl grid grid-cols-3 gap-1">
             ${['Dry-run', 'Konfirmasi', 'Live'].map(m => `
-              <button onclick="state.mode='${m}'; toast('Mode diubah ke${m}'); render()" class="py-2 rounded-lg text-xs font-semibold ${state.mode===m ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">${m}</button>
+              <button onclick="state.mode='${m}'; toast('Mode diubah ke ${m}'); render()" class="py-2 rounded-lg text-xs font-semibold ${state.mode===m ? 'bg-[#2563EB] text-white' : 'text-gray-600'}">${m}</button>
             `).join('')}
           </div>
           <div class="text-xs font-bold text-gray-400 uppercase pt-2">Strategi Aktif</div>
           <div class="bg-white rounded-2xl divide-y divide-gray-100 border border-gray-100">
             ${[{id: 'degen', name: 'Degen'}, {id: 'dip_buy', name: 'Dip Buy'}, {id: 'smart_money', name: 'Smart Money'}, {id: 'sniper', name: 'Sniper'}].map(s => `
-              <div onclick="state.strategy='${s.id}'; toast('Strategi${s.name} aktif'); render()" class="p-3.5 flex justify-between items-center cursor-pointer">
+              <div onclick="state.strategy='${s.id}'; toast('Strategi ${s.name} aktif'); render()" class="p-3.5 flex justify-between items-center cursor-pointer">
                 <div>
                   <div class="font-bold text-sm flex items-center gap-2">
-                    ${s.name}${state.strategy===s.id ? '<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-700">AKTIF</span>' : ''}
+                    ${s.name}
+                    ${state.strategy===s.id ? '<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-700">AKTIF</span>' : ''}
                   </div>
                   <div class="text-xs text-gray-400">${s.id}</div>
                 </div>
@@ -273,4 +267,34 @@
             <input id="w-addr" type="text" placeholder="Alamat Solana" class="w-full bg-gray-100 rounded-xl px-3 py-2.5 text-sm"/>
             <button onclick="addWallet()" class="w-full bg-[#2563EB] text-white py-2.5 rounded-xl text-sm font-bold">Simpan</button>
             <div class="space-y-1 pt-1">
-              ${state.wallets.map(w => `<div class="text-xs bg-gray
+              ${state.wallets.map(w => `<div class="text-xs bg-gray-50 p-2 rounded-lg flex justify-between"><b>${w.label}</b><span class="font-mono text-gray-400">${w.addr.slice(0,8)}...</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function addWallet() {
+      const label = document.getElementById('w-label').value.trim();
+      const addr = document.getElementById('w-addr').value.trim();
+      if (!label || !addr) return toast('Isi label dan alamat Solana dulu');
+      state.wallets.push({ label, addr });
+      toast('Wallet pantauan disimpan');
+      render();
+    }
+
+    render();
+  </script>
+
+  <!-- Masukkan skrip crab.js untuk mengaktifkan animasi kepiting neon LLM -->
+  <script src="crab.js"></script>
+  <script>
+    // Unlock Web Audio API saat pertama kali user menyentuh layar
+    window.addEventListener('click', () => {
+      if (window.CrabAgent && CrabAgent.audio && !CrabAgent.audio.running) {
+        CrabAgent.audio.unlock();
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>
