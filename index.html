@@ -1,248 +1,988 @@
-<!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ben Agent — LLM</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="/crab.js"></script>
-<style>
-:root{--bg:#050b09;--bg2:#08120f;--card:#0b1714;--card2:#0f1f1a;--line:rgba(120,200,170,.12);--line2:rgba(120,200,170,.2);--tx:#e6f4ee;--sub:#8fa9a0;--mut:#5d756d;
---ac:#34f5a0;--ac2:#22d3ee;--up:#34d399;--down:#fb7185;--warn:#fbbf24;--r:16px;--r-sm:12px;
---s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--sh:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.35)}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:radial-gradient(900px 500px at 85% -10%,rgba(52,245,160,.08),transparent 60%),radial-gradient(700px 400px at -10% 0%,rgba(34,211,238,.06),transparent 60%),var(--bg);
-color:var(--tx);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:88px;font-feature-settings:"tnum" 1,"cv11" 1;-webkit-font-smoothing:antialiased}
-svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;vertical-align:middle}
-svg.i.sm{width:14px;height:14px}svg.i.lg{width:20px;height:20px}
-.wrap{max-width:560px;margin:0 auto;padding:var(--s4) var(--s4) 0}
-.crabstage{position:relative;width:100%;height:58vh;min-height:300px;margin:0 0 var(--s4);border-radius:20px;overflow:hidden;border:1px solid rgba(52,245,160,.2);box-shadow:0 0 40px rgba(52,245,160,.06) inset,0 12px 32px rgba(0,0,0,.45);background:#020a08}
-.crabstage canvas{display:block;width:100%;height:100%}
-/* Overview: layar penuh, tidak bisa scroll */
-html.ov,html.ov body{height:100dvh;overflow:hidden;overscroll-behavior:none;touch-action:none}
-html.ov body{padding-bottom:0}
-html.ov .wrap{height:100dvh;display:flex;flex-direction:column;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-#v-dash{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--s3)}
-#v-dash .crabstage{flex:1;height:auto;min-height:0;margin:0}
-.pnlbar{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s3);margin:0;padding:var(--s4) var(--s4) 14px}
-.pnlbar .big{font-size:40px;margin:2px 0 0}
-.pnlbar .meta{text-align:right;font-size:11.5px;color:var(--sub);line-height:1.6}
-@media(min-width:900px){html.ov .wrap{max-width:1180px}}
-header{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:0 0 var(--s4)}
-.brand{display:flex;align-items:center;gap:var(--s3)}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#0f3b2c,#0b2a2f);border:1px solid rgba(52,245,160,.35);display:grid;place-items:center;color:var(--ac);box-shadow:0 0 18px rgba(52,245,160,.18)}
-h1{font-size:16px;font-weight:700;letter-spacing:-.1px}.sub{font-size:12px;color:var(--sub)}
-.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.6px;padding:5px 9px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--sub);text-transform:uppercase}
-.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.pill.live{color:var(--up);border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08)}.pill.dry{color:var(--warn);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
-.pill.degen{color:#f0abfc;border-color:rgba(217,70,239,.4);background:rgba(217,70,239,.08)}.pill.sniper{color:#fcd34d;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}.pill.bal{color:#7dd3fc;border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.08)}
-.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:var(--s4);margin-bottom:var(--s3);box-shadow:var(--sh)}
-.hero{position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(52,245,160,.14),transparent 70%);pointer-events:none}
-.k{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.7px}.big{font-size:34px;font-weight:800;letter-spacing:-1px;margin:var(--s1) 0 2px;line-height:1.15}
-.up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--mut)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}.mini{background:rgba(255,255,255,.015);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s3)}
-.mini b{display:block;font-size:17px;font-weight:700;margin-top:2px;letter-spacing:-.2px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:var(--s2)}
-.sec-t{display:flex;justify-content:space-between;align-items:center;margin:var(--s5) 2px var(--s2)}.sec-t h2{display:flex;align-items:center;gap:var(--s2);font-size:13px;font-weight:700;letter-spacing:.1px}.sec-t h2 svg{color:var(--ac)}.sec-t span{font-size:11.5px;color:var(--sub)}
-.risk{display:flex;gap:var(--s3);align-items:center}.rico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;border:1px solid currentColor;background:rgba(255,255,255,.02)}
-.rico.ok{color:var(--up)}.rico.watch{color:var(--warn)}.rico.halt{color:var(--down)}.rico.unknown{color:var(--mut)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:var(--s3)}.chip{font-size:11.5px;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--line);color:var(--sub)}.chip b{color:var(--tx);font-weight:600}
-.pos{display:grid;gap:var(--s2)}.pc .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:7px;font-weight:600}.tag.in{background:rgba(52,211,153,.1);color:var(--up)}.tag.out{background:rgba(251,113,133,.1);color:var(--down)}
-.pc .pair{display:flex;align-items:center;gap:var(--s2);font-weight:700}.pc .pair i{width:8px;height:8px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up)}.pc .pair i.out{background:var(--down);box-shadow:0 0 8px var(--down)}
-.bar{height:4px;border-radius:4px;background:rgba(255,255,255,.05);margin-top:var(--s3);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac2),var(--ac))}
-.ev{display:flex;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--line);align-items:flex-start}.ev:last-child{border:0}.ev .ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(52,245,160,.06);border:1px solid var(--line);color:var(--ac);flex:none}
-.ev .ic.close,.ev .ic.skip{color:var(--down);background:rgba(251,113,133,.06)}.ev .ic.claim{color:var(--warn);background:rgba(251,191,36,.06)}
-.ev p{font-size:13px}.ev small{color:var(--mut);font-size:11.5px}
-.empty{display:flex;flex-direction:column;align-items:center;gap:var(--s2);color:var(--sub);text-align:center;padding:var(--s5) var(--s3);font-size:13px}.empty svg{width:28px;height:28px;color:var(--mut);stroke-width:1.5}
-.skel{height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:sh 1.3s infinite}.skel+.skel{margin-top:10px}
-@keyframes sh{to{background-position:-200% 0}}
-/* agent kerja */
-.task{overflow-x:clip;display:flex;gap:var(--s3);align-items:center}.task+.task{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line)}
-.srcb{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.3px;color:#a7f3d0;background:rgba(52,245,160,.1);border:1px solid rgba(52,245,160,.25);vertical-align:1px}
-.tavw{width:64px;height:64px;margin:-11px -11px -11px 0;flex:none;display:grid;place-items:center;overflow:hidden;contain:paint;background:transparent}
-.tav{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(52,245,160,.05);border:1px solid var(--line2);color:var(--ac);position:relative;flex:none}
-.tav.busy:after,.tav.spin:after{content:"";position:absolute;inset:-4px;border-radius:15px;border:2px solid transparent;border-top-color:var(--ac);border-right-color:var(--ac2);animation:spin 1s linear infinite;animation-delay:var(--sd,0ms);will-change:transform;backface-visibility:hidden}
-.tav.spin:not(.busy):after{opacity:.8}
-@keyframes spin{to{transform:rotate(360deg)}}
-.tdo{font-size:13px;color:var(--sub)}.tdo.busy{color:#a7f3d0}.cd{font-size:11px;color:var(--sub);text-align:right;white-space:nowrap}.cd b{display:block;font-size:16px;color:var(--tx);font-weight:700}
-.livetag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--down);letter-spacing:.6px}
-.livedot{width:7px;height:7px;border-radius:50%;background:var(--down);animation:pulse 1.4s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(251,113,133,.6)}70%{box-shadow:0 0 0 7px rgba(251,113,133,0)}100%{box-shadow:0 0 0 0 rgba(251,113,133,0)}}
-.nw{white-space:nowrap}.lf{position:relative;padding-left:20px}.lf:before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:linear-gradient(var(--line2),transparent)}
-.le{position:relative;padding:var(--s2) 0 var(--s3)}.le:before{content:"";position:absolute;left:-17px;top:13px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:2px solid var(--ac)}
-.le.error:before{border-color:var(--down)}.le.warn:before{border-color:var(--warn)}.le.new{animation:fi .5s}
-@keyframes fi{from{opacity:0;transform:translateY(-6px)}}
-.lh{display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
-.lk{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(34,211,238,.08);color:#a5f3fc;text-transform:uppercase;letter-spacing:.5px}
-.lk.rug{background:rgba(251,191,36,.1);color:#fcd34d}.lk.deploy,.lk.claim{background:rgba(52,211,153,.1);color:#86efac}.lk.close,.lk.error{background:rgba(251,113,133,.1);color:#fda4af}
-.lt{font-size:12.5px;line-height:1.45;color:var(--tx);margin-top:4px;overflow-wrap:break-word;hyphens:manual}.ls{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:52px;text-align:right;flex:none}
-.lh .lk{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.le .ltk{margin-top:7px;font-size:13.5px;font-weight:800;letter-spacing:.2px;color:var(--tx);line-height:1.2}.le .ltk span{font-weight:600;color:var(--mut);font-size:11.5px;margin-left:1px}
-.le .lm{display:flex;flex-wrap:wrap;margin-top:4px;font-size:11.5px;line-height:1.45;color:var(--mut);font-variant-numeric:tabular-nums}.le .lm span{white-space:nowrap}.le .lm span:not(:last-child):after{content:"·";margin:0 7px;opacity:.6}.le .lt .lv{color:var(--down);font-weight:800;letter-spacing:.4px;margin-right:2px}
-/* nav */
-nav{position:fixed;left:0;right:0;bottom:0;background:rgba(4,10,8,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:5}
-nav .in{position:relative;display:grid;grid-template-columns:repeat(4,1fr);max-width:480px;width:100%}
-nav .ind{position:absolute;top:0;left:0;height:30px;width:56px;border-radius:15px;background:linear-gradient(180deg,rgba(52,245,160,.2),rgba(52,245,160,.1));border:1px solid rgba(52,245,160,.3);box-shadow:0 0 18px rgba(52,245,160,.15);transition:left .32s cubic-bezier(.3,.7,.2,1);pointer-events:none}
-nav button{position:relative;background:none;border:0;font:inherit;color:var(--mut);font-size:11px;font-weight:600;letter-spacing:.2px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;cursor:pointer}
-nav button.on{color:var(--tx)}nav button.on .ni{color:var(--ac)}
-.ni{width:56px;height:30px;display:grid;place-items:center}
-.hide{display:none!important}
-/* settings */
-.set-sec{padding:var(--s4)}.set-sec h2{display:flex;align-items:center;gap:var(--s2);font-size:11.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.7px;margin-bottom:var(--s3)}.set-sec h2 svg{color:var(--ac)}
-.toggle{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:6px 0}
-.sw{position:relative;width:44px;height:26px;flex:none}.sw input{opacity:0;width:0;height:0}.sl{position:absolute;inset:0;background:rgba(255,255,255,.08);border:1px solid var(--line2);border-radius:26px;transition:.2s}
-.sl:before{content:"";position:absolute;width:20px;height:20px;left:2px;top:2px;background:#cfe7de;border-radius:50%;transition:.2s}.sw input:checked+.sl{background:var(--ac);border-color:var(--ac)}.sw input:checked+.sl:before{transform:translateX(18px);background:#022016}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-bottom:var(--s3)}.field label{display:block;font-size:11.5px;color:var(--sub);margin-bottom:5px}
-.field input,.field select{width:100%;font:inherit;background:var(--card2);border:1px solid var(--line2);color:var(--tx);border-radius:10px;padding:9px 11px;outline:none}.field input:focus,.field select:focus{border-color:rgba(52,245,160,.5)}
-.btn-save{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--s2);padding:14px;border:0;border-radius:14px;background:var(--ac);color:#022016;font:inherit;font-weight:700;font-size:15px;margin:var(--s2) 0 var(--s4);box-shadow:0 8px 24px rgba(52,245,160,.2)}
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--card2);border:1px solid var(--line2);padding:10px 14px;border-radius:12px;font-size:13px;transition:.25s;z-index:9;box-shadow:var(--sh)}.toast.show{opacity:1;transform:translateX(-50%)}
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Muhya Investasi - AI Trading Bot</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        iosBg: '#F4F5F7',
+                        cardBg: '#FFFFFF',
+                        liveRed: '#EF4444',
+                        dryBlue: '#3B82F6',
+                        confirmAmber: '#F59E0B',
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-4px)' },
+                        },
+                        popIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.92) translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F4F5F7;
+            color: #111827;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 9999px;
+        }
+        .speech-bubble {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .office-fullscreen {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 60 !important;
+            max-width: 100% !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased select-none pb-24 max-w-md mx-auto min-h-screen bg-[#F4F5F7] shadow-xl relative">
 
+    <!-- ==================== HEADER STICKY ==================== -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-gray-900 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                MI
+            </div>
+            <div>
+                <h1 id="headerTitle" class="text-[17px] font-bold tracking-tight text-gray-900 leading-none">Muhya Investasi</h1>
+                <div class="flex items-center gap-1.5 mt-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span class="text-[11px] font-medium text-gray-500">Agen aktif · Solana</span>
+                </div>
+            </div>
+        </div>
 
-/* v42: no horizontal overflow anywhere (page, tabs, feed); feed only pans vertically */
-html,body{max-width:100%;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
-.wrap,main,.card,.lf,.le,.lh,.task{max-width:100%;min-width:0}
-main,.card,.lf{overflow-x:clip}
-.lf,#afeed{touch-action:pan-y;overscroll-behavior-x:none}
-.le .lt,.le .lm,.le .ltk,.tdo{min-width:0;overflow-wrap:anywhere;word-break:normal}
-.le .ltk{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.le .lm span{white-space:normal;overflow-wrap:anywhere}.le .lm span.sh{white-space:nowrap}
-.lh .lk{flex:0 1 auto;min-width:48px;max-width:calc(100% - 64px)}
-.lh .lc{flex:none;font-size:10px;font-weight:700;color:var(--sub);padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.05);margin-right:auto}
-.lk.trend{background:rgba(167,139,250,.12);color:#c4b5fd}.lk.learn,.lk.score{background:rgba(34,211,238,.08);color:#a5f3fc}.lk.info{background:rgba(255,255,255,.06);color:var(--sub)}
-.lk.lpagent{background:rgba(52,245,160,.12);color:#a7f3d0}
-.lt a,.lt .addr{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
-.lr-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2)}.lr-tiles .mini{padding:10px;min-width:0}.lr-tiles .k{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}.lr-tiles b{font-size:16px}
-.lr-sec{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line)}.lr-k{font-size:10.5px;margin-bottom:7px}.lr-note{font-size:12.5px}
-.lr-chips{display:flex;flex-wrap:wrap;gap:6px}.lr-chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;font-size:12px;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid var(--line);color:var(--sub);white-space:nowrap}
-.lr-chip b{color:var(--tx);font-weight:700}.lr-chip .lr-n{overflow:hidden;text-overflow:ellipsis}.lr-chip.bad{border-color:rgba(255,107,129,.25)}.lr-chip.bad b{color:var(--down)}.lr-chip.good{border-color:rgba(52,245,160,.25)}.lr-chip.good b{color:var(--up)}
-.lr-ban{display:flex;align-items:center;gap:8px;padding:3px 0}.lr-ban .sub{flex:1;min-width:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lr-mint{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
-.lr-set+.lr-set{margin-top:10px}.lr-sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.lr-tag{font-size:10.5px;font-weight:800;letter-spacing:.7px;padding:3px 8px;border-radius:6px}.lr-tag.yellow{color:#ffd15c;background:rgba(255,209,92,.1)}.lr-tag.green{color:var(--up);background:rgba(52,245,160,.1)}
-.lr-prog{font-size:11px;color:var(--mut)}.lr-prog.on{color:var(--up)}.lr-why{font-size:12px;margin-top:4px}
-</style></head><body>
-<div class="wrap">
-<header><div class="brand"><div class="logo"><i data-i="crab" class="lg"></i></div><div><h1>Ben Agent</h1><div class="sub" id="upd">Loading…</div></div></div>
-<div class="badges"><span class="pill" id="mode">—</span><span class="pill" id="strat">—</span></div></header>
+        <div class="flex items-center gap-2">
+            <button id="headerModeBtn" onclick="cycleTradingMode()" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all shadow-sm bg-red-500 text-white active:scale-95">
+                <span id="headerModeDot" class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                <span id="headerModeText">LIVE</span>
+            </button>
+            <button onclick="triggerRefresh()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 active:scale-90 flex items-center justify-center text-gray-600 transition-all">
+                <i id="refreshIcon" data-lucide="rotate-cw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
 
-<main id="v-dash">
- <div class="card hero pnlbar"><div><div class="k">Realized PnL · since 08:00 WIB</div><div class="big" id="pnl">–</div></div><div class="meta" id="pnlmeta"></div></div>
- <section class="crabstage"><canvas id="crab"></canvas></section>
-</main>
-<main id="v-port" class="hide">
- <div class="sec-t" style="margin-top:0"><h2><i data-i="pie" class="sm"></i>Performance</h2><span>since 08:00 WIB</span></div>
- <div class="grid">
-  <div class="mini"><span class="k">Floating PnL</span><b id="upnl">–</b></div>
-  <div class="mini"><span class="k">Unclaimed fees</span><b id="fees">–</b></div>
-  <div class="mini"><span class="k">Win rate today</span><b id="win">–</b></div>
-  <div class="mini"><span class="k">All-time PnL</span><b id="allt">–</b></div>
- </div>
- <div class="sec-t"><h2><i data-i="pie" class="sm"></i>What the agent learned</h2><span id="lrn-n"></span></div>
- <div class="card" id="lrn"><div class="sub">–</div></div>
- <div class="sec-t"><h2><i data-i="shield" class="sm"></i>Risk</h2><span></span></div>
- <div class="card"><div class="row"><div class="risk"><span class="rico unknown" id="rdot"><i data-i="shield"></i></span><div><div style="font-weight:700" id="rtitle">Risk status</div><div class="sub" id="rdesc">–</div></div></div><span class="pill" id="slots">–</span></div><div id="slotboard" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
-  <div class="chips" id="rchips"></div></div>
- <div class="sec-t"><h2><i data-i="layers" class="sm"></i>Active positions</h2><span id="npos"></span></div><div class="pos" id="pos"><div class="card"><div class="skel" style="width:40%"></div><div class="skel"></div></div></div>
- <div class="sec-t"><h2><i data-i="list" class="sm"></i>Latest decisions</h2><span>live</span></div><div class="card" id="feed" style="padding:4px 16px"><div style="padding:12px 0"><div class="skel" style="width:70%"></div><div class="skel" style="width:45%"></div></div></div>
-</main>
+    <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+    <main id="appContainer" class="px-4 pt-3.5 space-y-3.5">
 
-<main id="v-agent" class="hide">
- <div class="card"><div class="row" style="margin-bottom:12px"><div style="font-weight:700">Current tasks</div><span class="livetag"><span class="livedot"></span>LIVE</span></div><div id="tasks"><div class="skel" style="width:60%"></div><div class="skel"></div></div></div>
- <div class="sec-t"><h2><i data-i="activity" class="sm"></i>Real-time work log</h2><span id="actupd">–</span></div>
- <div class="card"><div class="lf" id="afeed"><div class="skel" style="width:50%"></div><div class="skel"></div><div class="skel" style="width:80%"></div></div></div>
-</main>
+        <!-- ==================== TAB 1: KANTOR ==================== -->
+        <section id="tab-kantor" class="tab-content space-y-3.5 animate-pop-in">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-semibold text-gray-800">Kinerja hari ini</span>
+                        <span class="text-xs text-gray-400 font-medium" id="currentDateLabel">18 Nov</span>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-400">24 jam <span id="pnl24hSmall" class="text-gray-600 font-semibold">+$0.00</span></span>
+                </div>
 
+                <div class="mt-2 mb-3">
+                    <div class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">PnL direalisasi</div>
+                    <div id="realizedPnlDisplay" class="text-3xl font-extrabold tracking-tight text-gray-900 mt-0.5 font-mono">
+                        +$0.00
+                    </div>
+                </div>
 
-<main id="v-set" class="hide">
-<div class="set-sec card">
-  <h2><i data-i="power" class="sm"></i>Operating Mode</h2>
-  <div class="toggle" style="padding:4px 0">
-    <div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:2px">Dry Run</div>
-      <div style="font-size:11.5px;color:var(--sub);line-height:1.35">On = test mode (no real money)<br>Off = LIVE (real money) · applies instantly<br><b id="dryNow">Agent now: loading…</b></div>
+                <div class="grid grid-cols-4 gap-2 pt-3 border-t border-gray-100">
+                    <div class="bg-gray-50/80 rounded-xl p-2">
+                        <div class="text-[10px] text-gray-400 font-medium">Mengambang</div>
+                        <div id="floatingPnlDisplay" class="text-xs font-bold text-gray-800 mt-0.5 font-mono">$0.00</div>
+                    </div>
+                    <div class="bg-gray-50/80 rounded-xl p-2">
+                        <div class="text-[10px] text-gray-400 font-medium">Posisi</div>
+                        <div id="activePosCountDisplay" class="text-xs font-bold text-gray-800 mt-0.5 font-mono">0/3</div>
+                    </div>
+                    <div class="bg-gray-50/80 rounded-xl p-2">
+                        <div class="text-[10px] text-gray-400 font-medium">Win-rate</div>
+                        <div id="winRateDisplay" class="text-xs font-bold text-gray-800 mt-0.5 font-mono">—</div>
+                    </div>
+                    <div class="bg-gray-50/80 rounded-xl p-2">
+                        <div class="text-[10px] text-gray-400 font-medium">Trades</div>
+                        <div id="tradesCountDisplay" class="text-xs font-bold text-gray-800 mt-0.5 font-mono">0</div>
+                        <div id="tradesSubCount" class="text-[9px] text-gray-400 leading-none mt-0.5">0M · 0K</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-100 text-[11px]">
+                    <div class="flex items-center gap-1.5 text-gray-500">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></span>
+                        <span id="lastSignalTicker">Sinyal terakhir 3 dtk lalu</span>
+                    </div>
+                    <span class="font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-md" id="activeStrategyBadge">LLM</span>
+                </div>
+            </div>
+
+            <!-- 3D Isometric AI Office Card -->
+            <div id="officeCardContainer" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+                <div id="officeViewport" class="relative w-full h-[360px] bg-gradient-to-b from-[#EEF2F6] to-[#E2E8F0] overflow-hidden flex items-center justify-center transition-all duration-300">
+                    <svg viewBox="0 0 400 380" class="w-full h-full max-w-[420px]" id="isometricOfficeSvg">
+                        <defs>
+                            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.12"/>
+                            </filter>
+                            <linearGradient id="floorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FFFFFF"/>
+                                <stop offset="100%" stop-color="#F1F5F9"/>
+                            </linearGradient>
+                            <linearGradient id="wallLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#E2E8F0"/>
+                                <stop offset="100%" stop-color="#CBD5E1"/>
+                            </linearGradient>
+                            <linearGradient id="wallRight" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#F8FAFC"/>
+                                <stop offset="100%" stop-color="#E2E8F0"/>
+                            </linearGradient>
+                        </defs>
+
+                        <g filter="url(#softShadow)">
+                            <polygon points="200,35 45,115 45,215 200,135" fill="url(#wallLeft)" stroke="#CBD5E1" stroke-width="1"/>
+                            <polygon points="200,35 355,115 355,215 200,135" fill="url(#wallRight)" stroke="#CBD5E1" stroke-width="1"/>
+                            <polygon points="200,135 355,215 200,335 45,215" fill="url(#floorGrad)" stroke="#CBD5E1" stroke-width="1.5"/>
+                            <polygon points="45,215 200,335 200,347 45,227" fill="#94A3B8"/>
+                            <polygon points="355,215 200,335 200,347 355,227" fill="#64748B"/>
+                        </g>
+
+                        <g stroke="#E2E8F0" stroke-width="1">
+                            <line x1="122" y1="175" x2="277" y2="275"/>
+                            <line x1="277" y1="175" x2="122" y2="275"/>
+                            <line x1="84" y1="195" x2="239" y2="305"/>
+                            <line x1="316" y1="195" x2="161" y2="305"/>
+                        </g>
+
+                        <!-- Stations -->
+                        <g id="agent-oracle" class="cursor-pointer" onclick="focusAgent('ORACLE')">
+                            <polygon points="125,155 165,175 135,192 95,172" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+                            <polygon points="95,172 135,192 135,204 95,184" fill="#CBD5E1"/>
+                            <polygon points="165,175 135,192 135,204 165,187" fill="#94A3B8"/>
+                            <circle cx="138" cy="154" r="7" fill="#0284C7"/>
+                            <path d="M130,169 C130,161 146,161 146,169 Z" fill="#0369A1"/>
+                            <g transform="translate(88, 128)">
+                                <rect x="0" y="0" width="66" height="18" rx="9" fill="#0F172A"/>
+                                <text x="33" y="12" fill="#FFFFFF" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Inter">ORACLE</text>
+                            </g>
+                        </g>
+
+                        <g id="agent-sentinel" class="cursor-pointer" onclick="focusAgent('SENTINEL')">
+                            <polygon points="265,155 305,175 275,192 235,172" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+                            <polygon points="235,172 275,192 275,204 235,184" fill="#CBD5E1"/>
+                            <polygon points="305,175 275,192 275,204 305,187" fill="#94A3B8"/>
+                            <circle cx="256" cy="155" r="7" fill="#059669"/>
+                            <path d="M248,170 C248,162 264,162 264,170 Z" fill="#047857"/>
+                            <g transform="translate(238, 126)">
+                                <rect x="0" y="0" width="74" height="18" rx="9" fill="#0F172A"/>
+                                <text x="37" y="12" fill="#FFFFFF" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Inter">SENTINEL</text>
+                            </g>
+                        </g>
+
+                        <g id="agent-phantom" class="cursor-pointer" onclick="focusAgent('PHANTOM')">
+                            <polygon points="265,212 305,232 275,249 235,229" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+                            <polygon points="235,229 275,249 275,261 235,241" fill="#CBD5E1"/>
+                            <polygon points="305,232 275,249 275,261 305,244" fill="#94A3B8"/>
+                            <circle cx="255" cy="212" r="7" fill="#7C3AED"/>
+                            <path d="M247,227 C247,219 263,219 263,227 Z" fill="#6D28D9"/>
+                            <g transform="translate(236, 185)">
+                                <rect x="0" y="0" width="74" height="18" rx="9" fill="#0F172A"/>
+                                <text x="37" y="12" fill="#FFFFFF" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Inter">PHANTOM</text>
+                            </g>
+                        </g>
+
+                        <g id="agent-final" class="cursor-pointer" onclick="focusAgent('FINAL')">
+                            <polygon points="195,265 235,285 205,302 165,282" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+                            <polygon points="165,282 205,302 205,314 165,294" fill="#CBD5E1"/>
+                            <polygon points="235,285 205,302 205,314 235,297" fill="#94A3B8"/>
+                            <circle cx="185" cy="266" r="7.5" fill="#D97706"/>
+                            <path d="M177,281 C177,273 193,273 193,281 Z" fill="#B45309"/>
+                            <g transform="translate(172, 238)">
+                                <rect x="0" y="0" width="58" height="18" rx="9" fill="#0F172A"/>
+                                <text x="29" y="12" fill="#FFFFFF" font-size="8.5" font-weight="700" text-anchor="middle" font-family="Inter">FINAL</text>
+                            </g>
+                        </g>
+                    </svg>
+
+                    <div id="agentSpeechBubble" class="speech-bubble absolute top-6 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl px-3.5 py-2 flex items-center gap-2 z-10 max-w-[260px]">
+                        <span id="bubbleAgentTag" class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">ORACLE</span>
+                        <span id="bubbleMessageText" class="text-xs font-semibold text-gray-800 truncate">Sinyal baru: CYBRON</span>
+                    </div>
+
+                    <button onclick="toggleFullscreenOffice()" id="fullscreenOfficeBtn" class="absolute bottom-3 right-3 bg-white/95 hover:bg-white text-gray-800 border border-gray-200 shadow-sm px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition-all">
+                        <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-gray-600"></i>
+                        <span id="fullscreenBtnText">Layar penuh</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: POSISI ==================== -->
+        <section id="tab-posisi" class="tab-content hidden space-y-3.5 animate-pop-in">
+            <div class="bg-gray-200/70 p-1 rounded-xl grid grid-cols-2 gap-1">
+                <button onclick="switchPositionSubtab('open')" id="subtab-open-btn" class="py-2 text-xs font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all">
+                    Terbuka (<span id="openCountBadge">0</span>)
+                </button>
+                <button onclick="switchPositionSubtab('closed')" id="subtab-closed-btn" class="py-2 text-xs font-semibold rounded-lg text-gray-500 hover:text-gray-800 transition-all">
+                    Ditutup (<span id="closedCountBadge">0</span>)
+                </button>
+            </div>
+
+            <div id="openPositionsList" class="space-y-3">
+                <div class="bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
+                    <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-gray-700">Tidak ada posisi terbuka.</p>
+                    <p class="text-xs text-gray-400 mt-1">Buka tab Screening untuk mengeksekusi sinyal AI.</p>
+                </div>
+            </div>
+
+            <div id="closedPositionsList" class="hidden space-y-3">
+                <div class="bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
+                    <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="archive" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-gray-700">Belum ada posisi yang ditutup.</p>
+                    <p class="text-xs text-gray-400 mt-1">Riwayat Take Profit / Stop Loss akan muncul di sini.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: SCREENING KANDIDAT ==================== -->
+        <section id="tab-kandidat" class="tab-content hidden space-y-3 animate-pop-in">
+            <div class="flex items-center justify-between px-1">
+                <div>
+                    <h2 class="text-sm font-bold text-gray-800">Screening Token AI</h2>
+                    <p class="text-[11px] text-gray-400">Dipindai real-time oleh ORACLE & SENTINEL</p>
+                </div>
+                <span class="text-[11px] font-semibold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full border border-blue-100">
+                    6 Terdeteksi
+                </span>
+            </div>
+
+            <div id="candidatesListContainer" class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-100 overflow-hidden">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: SETELAN ==================== -->
+        <section id="tab-setelan" class="tab-content hidden space-y-4 animate-pop-in">
+            <div class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-sm">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 px-1 mb-2">MODE OPERASI BOT</div>
+                <div class="grid grid-cols-2 gap-2 bg-gray-100 p-1 rounded-xl">
+                    <button onclick="setTradingMode('DAILY')" id="modeBtn-DAILY" class="mode-seg-btn py-2.5 text-xs font-bold rounded-lg text-gray-600 transition-all">
+                        Daily
+                    </button>
+                    <button onclick="setTradingMode('LIVE')" id="modeBtn-LIVE" class="mode-seg-btn py-2.5 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm transition-all">
+                        Live
+                    </button>
+                </div>
+                <p id="modeDescriptionText" class="text-[11px] text-gray-500 mt-2.5 px-1">
+                    Entry dan exit dieksekusi secara online (live mode).
+                </p>
+            </div>
+
+            <!-- Setelan Form Rows -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3.5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400">MANAJEMEN KEUANGAN & TARGET</div>
+                
+                <div class="flex items-center justify-between py-1">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-800">Ukuran Posisi Awal (SOL)</div>
+                        <div class="text-[10px] text-gray-400">Default SOL per sinyal valid</div>
+                    </div>
+                    <input type="number" step="0.01" id="settingPosSize" value="0.05" onchange="updateSetting('posSize', this.value)" class="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-right font-mono focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex items-center justify-between py-1 border-t border-gray-100">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-800">Pajak Token (%)</div>
+                        <div class="text-[10px] text-gray-400">Maksimal slippage / pajak beli</div>
+                    </div>
+                    <input type="number" step="0.1" id="settingTax" value="1.0" onchange="updateSetting('tax', this.value)" class="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-right font-mono focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex items-center justify-between py-1 border-t border-gray-100">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-800">Take Profit (%)</div>
+                        <div class="text-[10px] text-gray-400">Target TP otomatis</div>
+                    </div>
+                    <input type="number" id="settingTP" value="25" onchange="updateSetting('tp', this.value)" class="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-right font-mono focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex items-center justify-between py-1 border-t border-gray-100">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-800">Stop Loss (%)</div>
+                        <div class="text-[10px] text-gray-400">Proteksi kerugian</div>
+                    </div>
+                    <input type="number" id="settingSL" value="-15" onchange="updateSetting('sl', this.value)" class="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-right font-mono focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex items-center justify-between py-1 border-t border-gray-100">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-800">Trailing Stop</div>
+                        <div class="text-[10px] text-gray-400">Kunci profit otomatis</div>
+                    </div>
+                    <input type="checkbox" id="settingTrailing" checked onchange="updateSetting('trailing', this.checked)" class="w-5 h-5 accent-blue-600 rounded">
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 5: LAINNYA ==================== -->
+        <section id="tab-lainnya" class="tab-content hidden space-y-3.5 animate-pop-in">
+            <!-- Wallet Pantauan Header -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-gray-800">Wallet Pantauan</h2>
+                        <p class="text-[11px] text-gray-400">Wallet Solana tersimpan untuk pelacakan whale & copy trade</p>
+                    </div>
+                    <button onclick="openAddWalletModal()" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl text-xs font-bold transition-all flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>Tambah</span>
+                    </button>
+                </div>
+
+                <div id="trackedWalletsList" class="space-y-2 pt-2 border-t border-gray-100">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Menu Lainnya Links -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-100 overflow-hidden text-sm">
+                <button onclick="showToast('Risk engine aktif: Memantau drawdown & batas rugi harian')" class="w-full px-4 py-3.5 flex items-center justify-between hover:bg-gray-50 text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">Risk Engine</div>
+                            <div class="text-[11px] text-gray-400">Batas rugi, drawdown, eksposur</div>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                </button>
+
+                <button onclick="showToast('Brief 24 Jam: 148 token dipindai, 34 lolos filter')" class="w-full px-4 py-3.5 flex items-center justify-between hover:bg-gray-50 text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">Brief 24 Jam</div>
+                            <div class="text-[11px] text-gray-400">Kandidat, keputusan, trade, risiko</div>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                </button>
+
+                <button onclick="showToast('Laporan harian berhasil dikirim ke chat Telegram!')" class="w-full px-4 py-3.5 flex items-center justify-between hover:bg-gray-50 text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">Kirim Laporan ke Chat</div>
+                            <div class="text-[11px] text-gray-400">Ringkasan hari ini via Telegram bot</div>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODAL DETAIL CANDIDATE ==================== -->
+    <div id="candidateDetailModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end justify-center hidden transition-all">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto space-y-4 animate-pop-in">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div>
+                    <h3 id="modalTokenName" class="text-lg font-bold text-gray-900">CYBRON</h3>
+                    <p id="modalTokenTicker" class="text-xs text-gray-400 font-mono">6J1fed2...749pump</p>
+                </div>
+                <button onclick="closeCandidateModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div class="bg-gray-50 p-3 rounded-xl">
+                    <div class="text-[11px] text-gray-400 font-medium">Market Cap</div>
+                    <div id="modalMcap" class="text-sm font-bold text-gray-800 font-mono">$45.0K</div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-xl">
+                    <div class="text-[11px] text-gray-400 font-medium">Likuiditas</div>
+                    <div id="modalLiq" class="text-sm font-bold text-gray-800 font-mono">$8.8K</div>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200/60 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-200 text-amber-800">WATCH</span>
+                    <span id="modalConfidence" class="text-xs font-semibold text-amber-900">Confidence 22%</span>
+                </div>
+                <p id="modalReasoning" class="text-xs text-amber-950 leading-relaxed font-medium">
+                    Batch #17 screened 3 tokens. All flagged extended lifecycle with late_entry_risk. No buy justified.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="copyContractAddress()" class="py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>Salin CA</span>
+                </button>
+                <button onclick="executeBuyFromModal()" class="py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold shadow-md shadow-red-500/20">
+                    Beli (<span id="modalModeLabel">LIVE</span>)
+                </button>
+            </div>
+        </div>
     </div>
-    <label class="sw"><input type="checkbox" data-k="dryRun" id="dryT" disabled><span class="sl"></span></label>
-  </div>
-  <div class="toggle" style="padding:12px 0 4px;border-top:1px solid var(--line);margin-top:8px">
-    <div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:2px">Mode</div>
-      <div style="font-size:11.5px;color:var(--sub);line-height:1.35">Balanced = strict filters · Degen = looser, early momentum<br>Sniper = tuned aggressive-but-safe preset (applies its filter values)</div>
+
+    <!-- ==================== MODAL TAMBAH WALLET ==================== -->
+    <div id="addWalletModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end justify-center hidden transition-all">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-4 animate-pop-in">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <h3 class="text-base font-bold text-gray-900">Tambah Wallet Pantauan</h3>
+                <button onclick="closeAddWalletModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Label (mis. whale1)</label>
+                    <input type="text" id="newWalletLabel" placeholder="Nama pemilik / label" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat Solana</label>
+                    <input type="text" id="newWalletAddress" placeholder="Masukkan public key Solana..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <button onclick="saveNewWallet()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20">
+                Simpan Wallet
+            </button>
+        </div>
     </div>
-    <div class="field" style="margin:0;flex:0 0 auto;min-width:118px"><select data-k="mode"><option value="balanced">Balanced</option><option value="degen">Degen</option><option value="sniper">Sniper</option></select></div>
-  </div>
-</div>
-<div class="set-sec card">
-  <h2><i data-i="coins" class="sm"></i>Position Size & SOL</h2>
-  <div class="row2">
-    <div class="field"><label>SOL per deploy</label><input type="number" step="0.01" min="0.01" data-k="deployAmountSol"></div>
-    <div class="field"><label>Max positions</label><input type="number" step="1" min="1" data-k="maxPositions"></div>
-    <div class="field"><label>Size per position (SOL)</label><input type="number" step="0.1" min="0.1" data-k="positionSol"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min SOL to open</label><input type="number" step="0.01" min="0" data-k="minSolToOpen"></div>
-    <div class="field"><label>Position size %</label><input type="number" step="1" min="1" max="100" data-k="positionSizePctPct"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Max deploy (SOL)</label><input type="number" step="0.1" min="0" data-k="maxDeployAmount"></div>
-    <div class="field"><label>Gas reserve (SOL)</label><input type="number" step="0.01" min="0" data-k="gasReserve"></div>
-  </div>
-</div>
-<div class="set-sec card">
-  <h2><i data-i="filter" class="sm"></i>Filter Screening</h2>
-  <div class="row2">
-    <div class="field"><label>Min TVL ($)</label><input type="number" step="100" min="0" data-k="minTvl"></div>
-    <div class="field"><label>Max TVL ($)</label><input type="number" step="100" min="0" data-k="maxTvl"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min Volume</label><input type="number" step="10" min="0" data-k="minVolume"></div>
-    <div class="field"><label>Min Holders</label><input type="number" step="10" min="0" data-k="minHolders"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min Mcap ($)</label><input type="number" step="1000" min="0" data-k="minMcap"></div>
-    <div class="field"><label>Max Mcap ($)</label><input type="number" step="1000" min="0" data-k="maxMcap"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min Bin Step</label><input type="number" step="1" min="1" data-k="minBinStep"></div>
-    <div class="field"><label>Max Bin Step</label><input type="number" step="1" min="1" data-k="maxBinStep"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min Organic %</label><input type="number" step="1" min="0" max="100" data-k="minOrganic"></div>
-    <div class="field"><label>Min Quote Organic %</label><input type="number" step="1" min="0" max="100" data-k="minQuoteOrganic"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>Min Token Fees (SOL)</label><input type="number" step="1" min="0" data-k="minTokenFeesSol"></div>
-    <div class="field"><label>Max automated holders %</label><input type="number" step="1" min="0" max="100" data-k="maxBotHoldersPct"></div>
-  </div>
-  <div class="field"><label>Max Top 10 %</label><input type="number" step="1" min="0" max="100" data-k="maxTop10Pct"></div>
-  <div class="toggle"><span>Exclude high supply concentration</span><label class="sw"><input type="checkbox" data-k="excludeHighSupplyConcentration"><span class="sl"></span></label></div>
-  <div class="toggle"><span>Avoid PVP symbols</span><label class="sw"><input type="checkbox" data-k="avoidPvpSymbols"><span class="sl"></span></label></div>
-  <div class="toggle"><span>Block PVP symbols</span><label class="sw"><input type="checkbox" data-k="blockPvpSymbols"><span class="sl"></span></label></div>
-  <div class="field"><label>GMGN</label><div id="gmgnState" class="muted">checking…</div></div>
-  <div class="toggle"><span>Use GMGN signals (trending, smart money, extra rug checks)</span><label class="sw"><input type="checkbox" data-k="useGmgnSignals"><span class="sl"></span></label></div>
-</div>
-<div class="set-sec card">
-  <h2><i data-i="range" class="sm"></i>Range Strategy</h2>
-  <div class="field"><label>Strategy</label><select data-k="strategy"><option value="bid_ask">bid_ask</option><option value="spot">spot</option><option value="curve">curve</option></select></div>
-  <div class="row2">
-    <div class="field"><label>Min bins below</label><input type="number" step="1" min="1" data-k="minBinsBelow"></div>
-    <div class="field"><label>Max bins below</label><input type="number" step="1" min="1" data-k="maxBinsBelow"></div>
-  </div>
-  <div class="field"><label>Default bins below</label><input type="number" step="1" min="1" data-k="defaultBinsBelow"></div>
-  <div class="toggle"><span>Allow new bin arrays (pays ~0.07 SOL non-refundable rent each)</span><label class="sw"><input type="checkbox" data-k="allowNewBinArrays"><span class="sl"></span></label></div>
-</div>
-<div class="set-sec card">
-  <h2><i data-i="sliders" class="sm"></i>Slot Strategies</h2>
-  <div class="sub" style="margin-bottom:8px">YELLOW scalp: two-sided Spot around price (part of the SOL is swapped into the token). GREEN farm: single-sided SOL below price, rebalanced when price runs above the range.</div>
-  <div class="row2">
-    <div class="field"><label>YELLOW range below %</label><input type="number" step="1" min="5" max="60" data-k="yellowRangeBelow"></div>
-    <div class="field"><label>YELLOW range above %</label><input type="number" step="1" min="5" max="100" data-k="yellowRangeAbove"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>YELLOW token ratio (0–0.9)</label><input type="number" step="0.05" min="0" max="0.9" data-k="yellowTokenRatio"></div>
-    <div class="field"><label>YELLOW take profit %</label><input type="number" step="0.5" data-k="yellowTakeProfitPct"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>YELLOW stop loss %</label><input type="number" step="1" data-k="yellowStopLossPct"></div>
-    <div class="field"><label>YELLOW max hold (min)</label><input type="number" step="1" min="1" data-k="yellowMaxHoldMin"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>GREEN range below %</label><input type="number" step="1" min="10" max="90" data-k="greenRangeBelow"></div>
-    <div class="field"><label>GREEN take profit %</label><input type="number" step="0.5" data-k="greenTakeProfitPct"></div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>GREEN rebalance after (min above range)</label><input type="number" step="1"
+
+    <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+    <div id="toastContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-[90%] max-w-[360px] flex justify-center"></div>
+
+    <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 py-1.5">
+        <div class="grid grid-cols-5 gap-1">
+            <button onclick="switchTab('kantor')" id="nav-btn-kantor" class="nav-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-blue-600 transition-all">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-semibold">Kantor</span>
+            </button>
+            <button onclick="switchTab('posisi')" id="nav-btn-posisi" class="nav-tab-btn relative flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-400 hover:text-gray-700 transition-all">
+                <span id="navPosBadge" class="hidden absolute top-1 right-3 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">0</span>
+                <i data-lucide="pie-chart" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-medium">Posisi</span>
+            </button>
+            <button onclick="switchTab('kandidat')" id="nav-btn-kandidat" class="nav-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-400 hover:text-gray-700 transition-all">
+                <i data-lucide="shield-check" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-medium">Screening</span>
+            </button>
+            <button onclick="switchTab('setelan')" id="nav-btn-setelan" class="nav-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-400 hover:text-gray-700 transition-all">
+                <i data-lucide="sliders" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-medium">Setelan</span>
+            </button>
+            <button onclick="switchTab('lainnya')" id="nav-btn-lainnya" class="nav-tab-btn flex flex-col items-center justify-center py-1.5 rounded-xl text-gray-400 hover:text-gray-700 transition-all">
+                <i data-lucide="menu" class="w-5 h-5 mb-0.5"></i>
+                <span class="text-[11px] font-medium">Lainnya</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== APPLICATION SCRIPT ==================== -->
+    <script>
+        // Initialize Telegram WebApp if available
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            try { tg.setHeaderColor('#ffffff'); } catch (e) {}
+        }
+
+        // Global App State
+        const state = {
+            activeTab: 'kantor',
+            tradingMode: 'LIVE', // 'LIVE' | 'DAILY'
+            isOfficeFullscreen: false,
+            positionSubtab: 'open', // 'open' | 'closed'
+            selectedCandidateId: null,
+            realizedPnl: 0.00,
+            floatingPnl: 0.00,
+            tradesCount: 0,
+            openPositions: [],
+            closedPositions: [],
+            trackedWallets: [
+                { id: 'w1', label: 'Whale Solana Alpha', address: '5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1' }
+            ],
+            settings: {
+                posSize: 6.79,
+                tp: 25,
+                sl: -15,
+                trailing: true
+            },
+            candidates: [
+                { id: 'c1', name: 'CYBRON', ticker: 'CYBRON', mcap: '$45.0K', liq: '$8.8K', status: 'WATCH', route: 'trending', confidence: 22, ca: '6J1fed2acj9b7v5XksBdEmh68EsY9r19zKsKdNJ749pump', reasoning: 'Batch #17 screened 3 tokens. All flagged extended lifecycle with late_entry_risk. No buy justified.' },
+                { id: 'c2', name: 'OK', ticker: 'OK', mcap: '$36.2K', liq: '$7.1K', status: 'WATCH', route: 'trending', confidence: 31, ca: '9Q2wEr4tY6uI8oP0aS3dF5gH7jK9lZ1xC3vB5nM7pump', reasoning: 'Strong momentum detected on Jupiter trending. Holder distribution healthy.' },
+                { id: 'c3', name: 'Nailoong', ticker: 'NALOONG', mcap: '$27.5K', liq: '$6.5K', status: 'WATCH', route: 'graduated', confidence: 28, ca: '4Z6xCv8bN0mQ2wE4rT6yU8iO0pA2sD4fG6hJ8kL0pump', reasoning: 'Graduated Raydium pool stabilized. Awaiting secondary buyer volume.' },
+                { id: 'c4', name: 'GMMUSK', ticker: 'GMMUSK', mcap: '$31.0K', liq: '$7.4K', status: 'WATCH', route: 'graduated', confidence: 25, ca: '7P9oIu5yT3rE1wQ8aS6dF4gH2jK0lM9nB7vC5xZ3pump', reasoning: 'Moderate narrative score, steady swap cadence.' },
+                { id: 'c5', name: 'NEVERDOOM', ticker: 'NDOOM', mcap: '$55.1K', liq: '$12.2K', status: 'WATCH', route: 'graduated', confidence: 38, ca: '2A4sDf6gH8jK0lZ2xC4vB6nM8qW0eR2tY4uI6oP8pump', reasoning: 'High liquidity profile. Monitoring pullback level for entry.' },
+                { id: 'c6', name: 'Mèo', ticker: 'MEO', mcap: '$29.6K', liq: '$5.9K', status: 'WATCH', route: 'trending', confidence: 19, ca: '5L7kJh9gF1dS3aP5oI7uY9tR1eW3qZ5xC7vB9nM1pump', reasoning: 'High volatility score. Bundled wallet ratio elevated.' }
+            ],
+            officeMessages: [
+                { agent: 'ORACLE', text: 'Sinyal baru: CYBRON' },
+                { agent: 'SENTINEL', text: 'Cek layar & likuiditas...' },
+                { agent: 'PHANTOM', text: 'Phantom memantau rute degen' },
+                { agent: 'FINAL', text: 'Menunggu konfirmasi final LLM' }
+            ]
+        };
+
+        let officeMsgIndex = 0;
+        let signalTimerSeconds = 3;
+
+        // ==================== TOAST HELPER ====================
+        let toastTimer = null;
+        function showToast(msg, type = 'dark') {
+            const container = document.getElementById('toastContainer');
+            const bgClass = type === 'green' ? 'bg-emerald-600 text-white' : type === 'red' ? 'bg-red-600 text-white' : 'bg-gray-900/95 text-white';
+            
+            container.innerHTML = `
+                <div class="${bgClass} px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-pop-in backdrop-blur-md">
+                    <span>${msg}</span>
+                </div>
+            `;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { container.innerHTML = ''; }, 2600);
+        }
+
+        // ==================== NAVIGATION TABS ====================
+        function switchTab(tabId) {
+            state.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'font-semibold');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById(`nav-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-blue-600');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderUI();
+        }
+
+        // ==================== TRADING MODE TOGGLE ====================
+        function cycleTradingMode() {
+            state.tradingMode = state.tradingMode === 'LIVE' ? 'DAILY' : 'LIVE';
+            const btn = document.getElementById('headerModeBtn');
+            const dot = document.getElementById('headerModeDot');
+            const text = document.getElementById('headerModeText');
+            const desc = document.getElementById('modeDescriptionText');
+
+            if (state.tradingMode === 'LIVE') {
+                btn.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all shadow-sm bg-red-500 text-white active:scale-95';
+                dot.className = 'w-2 h-2 rounded-full bg-white animate-pulse';
+                text.textContent = 'LIVE';
+                if (desc) desc.textContent = 'Entry dan exit dieksekusi secara online (live mode).';
+                showToast('Mode diubah ke LIVE (Eksekusi Real)');
+            } else {
+                btn.className = 'flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all shadow-sm bg-blue-600 text-white active:scale-95';
+                dot.className = 'w-2 h-2 rounded-full bg-white';
+                text.textContent = 'DAILY';
+                if (desc) desc.textContent = 'Mode simulasi harian tanpa risiko dana riil.';
+                showToast('Mode diubah ke DAILY (Simulasi)');
+            }
+            document.querySelectorAll('.mode-seg-btn').forEach(b => {
+                b.className = 'mode-seg-btn py-2.5 text-xs font-bold rounded-lg text-gray-600 transition-all';
+            });
+            const segActive = document.getElementById(`modeBtn-${state.tradingMode}`);
+            if (segActive) segActive.className = 'mode-seg-btn py-2.5 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm transition-all';
+        }
+
+        function setTradingMode(mode) {
+            state.tradingMode = mode;
+            cycleTradingMode();
+        }
+
+        // ==================== REFRESH SIMULATION ====================
+        function triggerRefresh() {
+            const icon = document.getElementById('refreshIcon');
+            if (icon) icon.classList.add('rotate-180');
+            signalTimerSeconds = 1;
+            cycleOfficeSpeech();
+            showToast('Data & sinyal AI Muhya Investasi diperbarui');
+            setTimeout(() => {
+                if (icon) icon.classList.remove('rotate-180');
+                renderUI();
+            }, 450);
+        }
+
+        function cycleOfficeSpeech() {
+            officeMsgIndex = (officeMsgIndex + 1) % state.officeMessages.length;
+            const m = state.officeMessages[officeMsgIndex];
+            const tag = document.getElementById('bubbleAgentTag');
+            const txt = document.getElementById('bubbleMessageText');
+            if (tag && txt) {
+                tag.textContent = m.agent;
+                txt.textContent = m.text;
+            }
+        }
+
+        function focusAgent(agentName) {
+            const messages = {
+                ORACLE: 'Oracle memindai 148 token di Jupiter & GMGN.',
+                SENTINEL: 'Sentinel memeriksa honeypot & kelengkapan data.',
+                PHANTOM: 'Phantom mendeteksi rute degen & volume harian.',
+                FINAL: 'Final Decision: Semua gerbang pengaman aktif.'
+            };
+            const tag = document.getElementById('bubbleAgentTag');
+            const txt = document.getElementById('bubbleMessageText');
+            if (tag && txt) {
+                tag.textContent = agentName;
+                txt.textContent = messages[agentName] || 'Agen aktif';
+            }
+            showToast(`Fokus agen: ${agentName}`);
+        }
+
+        // ==================== FULLSCREEN OFFICE ====================
+        function toggleFullscreenOffice() {
+            state.isOfficeFullscreen = !state.isOfficeFullscreen;
+            const card = document.getElementById('officeCardContainer');
+            const viewport = document.getElementById('officeViewport');
+            const btnText = document.getElementById('fullscreenBtnText');
+
+            if (state.isOfficeFullscreen) {
+                card.classList.add('office-fullscreen');
+                viewport.style.height = '100vh';
+                btnText.textContent = 'Tutup layar penuh';
+                showToast('Mode Layar Penuh Aktif');
+            } else {
+                card.classList.remove('office-fullscreen');
+                viewport.style.height = '360px';
+                btnText.textContent = 'Layar penuh';
+            }
+        }
+
+        // ==================== POSITIONS & TRADING ====================
+        function switchPositionSubtab(sub) {
+            state.positionSubtab = sub;
+            const openBtn = document.getElementById('subtab-open-btn');
+            const closedBtn = document.getElementById('subtab-closed-btn');
+            const openList = document.getElementById('openPositionsList');
+            const closedList = document.getElementById('closedPositionsList');
+
+            if (sub === 'open') {
+                openBtn.className = 'py-2 text-xs font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
+                closedBtn.className = 'py-2 text-xs font-semibold rounded-lg text-gray-500 hover:text-gray-800 transition-all';
+                openList.classList.remove('hidden');
+                closedList.classList.add('hidden');
+            } else {
+                closedBtn.className = 'py-2 text-xs font-bold rounded-lg bg-white text-gray-900 shadow-sm transition-all';
+                openBtn.className = 'py-2 text-xs font-semibold rounded-lg text-gray-500 hover:text-gray-800 transition-all';
+                closedList.classList.remove('hidden');
+                openList.classList.add('hidden');
+            }
+        }
+
+        function openCandidateModal(id) {
+            state.selectedCandidateId = id;
+            const c = state.candidates.find(item => item.id === id);
+            if (!c) return;
+
+            document.getElementById('modalTokenName').textContent = c.name;
+            document.getElementById('modalTokenTicker').textContent = c.ca;
+            document.getElementById('modalMcap').textContent = c.mcap;
+            document.getElementById('modalLiq').textContent = c.liq;
+            document.getElementById('modalConfidence').textContent = `Confidence ${c.confidence}%`;
+            document.getElementById('modalReasoning').textContent = c.reasoning;
+            document.getElementById('modalModeLabel').textContent = state.tradingMode;
+
+            document.getElementById('candidateDetailModal').classList.remove('hidden');
+        }
+
+        function closeCandidateModal() {
+            document.getElementById('candidateDetailModal').classList.add('hidden');
+            state.selectedCandidateId = null;
+        }
+
+        function copyContractAddress() {
+            const c = state.candidates.find(item => item.id === state.selectedCandidateId);
+            if (!c) return;
+            const textarea = document.createElement('textarea');
+            textarea.value = c.ca;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Contract Address disalin ke papan klip');
+            } catch (e) {
+                showToast('Gagal menyalin CA');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function executeBuyFromModal() {
+            const c = state.candidates.find(item => item.id === state.selectedCandidateId);
+            if (!c) return;
+
+            if (state.openPositions.length >= 3) {
+                showToast('Maksimal 3 posisi terbuka tercapai!', 'red');
+                return;
+            }
+
+            const size = state.settings.posSize;
+            state.openPositions.push({
+                id: 'pos-' + Date.now(),
+                name: c.name,
+                ticker: c.ticker,
+                amount: size,
+                entryMcap: c.mcap,
+                openedAt: 'Baru saja'
+            });
+
+            state.tradesCount += 1;
+            closeCandidateModal();
+            showToast(`Order Beli (${state.tradingMode}) ${size} SOL ${c.name} berhasil dieksekusi!`, 'green');
+            switchTab('posisi');
+        }
+
+        function closePosition(id) {
+            const idx = state.openPositions.findIndex(p => p.id === id);
+            if (idx === -1) return;
+            const pos = state.openPositions[idx];
+            state.openPositions.splice(idx, 1);
+
+            const pnl = Number((pos.amount * 0.18).toFixed(2));
+            state.realizedPnl += pnl;
+
+            state.closedPositions.unshift({
+                ...pos,
+                closedAt: 'Baru saja',
+                pnl: pnl,
+                pnlPct: '+18.0%'
+            });
+
+            showToast(`Posisi ${pos.name} ditutup (+$${pnl.toFixed(2)})`, 'green');
+            renderUI();
+        }
+
+        // ==================== WALLET PANTAUAN ====================
+        function openAddWalletModal() {
+            document.getElementById('addWalletModal').classList.remove('hidden');
+        }
+
+        function closeAddWalletModal() {
+            document.getElementById('addWalletModal').classList.add('hidden');
+            document.getElementById('newWalletLabel').value = '';
+            document.getElementById('newWalletAddress').value = '';
+        }
+
+        function saveNewWallet() {
+            const label = document.getElementById('newWalletLabel').value.trim();
+            const address = document.getElementById('newWalletAddress').value.trim();
+
+            if (!label || !address) {
+                showToast('Isi label dan alamat Solana terlebih dahulu', 'red');
+                return;
+            }
+
+            state.trackedWallets.unshift({
+                id: 'w-' + Date.now(),
+                label,
+                address
+            });
+
+            closeAddWalletModal();
+            showToast(`Wallet "${label}" berhasil disimpan!`, 'green');
+            renderUI();
+        }
+
+        function removeWallet(id) {
+            state.trackedWallets = state.trackedWallets.filter(w => w.id !== id);
+            showToast('Wallet pantauan dihapus');
+            renderUI();
+        }
+
+        function updateSetting(key, val) {
+            state.settings[key] = val;
+            showToast('Setelan diperbarui');
+        }
+
+        // ==================== RENDER UI ====================
+        function renderUI() {
+            // Header & Dashboard Stats
+            document.getElementById('realizedPnlDisplay').textContent = (state.realizedPnl >= 0 ? '+' : '-') + '$' + Math.abs(state.realizedPnl).toFixed(2);
+            document.getElementById('pnl24hSmall').textContent = (state.realizedPnl >= 0 ? '+' : '-') + '$' + Math.abs(state.realizedPnl).toFixed(2);
+            document.getElementById('floatingPnlDisplay').textContent = state.openPositions.length > 0 ? '+$0.42' : '$0.00';
+            document.getElementById('activePosCountDisplay').textContent = `${state.openPositions.length}/3`;
+            document.getElementById('tradesCountDisplay').textContent = state.tradesCount;
+            document.getElementById('openCountBadge').textContent = state.openPositions.length;
+            document.getElementById('closedCountBadge').textContent = state.closedPositions.length;
+
+            const navBadge = document.getElementById('navPosBadge');
+            if (state.openPositions.length > 0) {
+                navBadge.textContent = state.openPositions.length;
+                navBadge.classList.remove('hidden');
+            } else {
+                navBadge.classList.add('hidden');
+            }
+
+            // Render Candidates
+            const candContainer = document.getElementById('candidatesListContainer');
+            candContainer.innerHTML = state.candidates.map(c => `
+                <div onclick="openCandidateModal('${c.id}')" class="px-4 py-3.5 hover:bg-gray-50 flex items-center justify-between cursor-pointer transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 font-bold text-xs flex items-center justify-center">
+                            ${c.ticker.slice(0, 3)}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-gray-900">${c.name}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-amber-100 text-amber-700">${c.status}</span>
+                            </div>
+                            <div class="text-[11px] text-gray-400 mt-0.5">Mcap ${c.mcap} · Liq ${c.liq} · ${c.route}</div>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                </div>
+            `).join('');
+
+            // Render Open Positions
+            const openList = document.getElementById('openPositionsList');
+            if (state.openPositions.length === 0) {
+                openList.innerHTML = `
+                    <div class="bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-sm">
+                        <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="layers" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-700">Tidak ada posisi terbuka.</p>
+                        <p class="text-xs text-gray-400 mt-1">Buka tab Screening untuk mengeksekusi sinyal AI.</p>
+                    </div>
+                `;
+            } else {
+                openList.innerHTML = state.openPositions.map(p => `
+                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-gray-900">${p.name}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-50 text-blue-600">LIVE</span>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 font-mono">+0.012 SOL (+6.2%)</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>Ukuran: <strong class="text-gray-800 font-mono">${p.amount} SOL</strong></span>
+                            <span>Entry Mcap: <strong class="text-gray-800 font-mono">${p.entryMcap}</strong></span>
+                        </div>
+                        <button onclick="closePosition('${p.id}')" class="w-full py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold transition-all">
+                            Jual & Tutup Posisi
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Render Closed Positions
+            const closedList = document.getElementById('closedPositionsList');
+            if (state.closedPositions.length > 0) {
+                closedList.innerHTML = state.closedPositions.map(p => `
+                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-sm text-gray-900">${p.name}</span>
+                            <span class="text-xs font-bold text-emerald-600 font-mono">+$${p.pnl.toFixed(2)} (${p.pnlPct})</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Modal: $${p.amount}</span>
+                            <span>${p.closedAt}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render Tracked Wallets
+            const walletList = document.getElementById('trackedWalletsList');
+            if (state.trackedWallets.length === 0) {
+                walletList.innerHTML = `<p class="text-xs text-gray-400 py-2">Belum ada wallet tersimpan.</p>`;
+            } else {
+                walletList.innerHTML = state.trackedWallets.map(w => `
+                    <div class="bg-gray-50 rounded-xl p-3 flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-gray-800">${w.label}</div>
+                            <div class="text-[10px] text-gray-400 font-mono truncate">${w.address}</div>
+                        </div>
+                        <button onclick="removeWallet('${w.id}')" class="text-red-500 hover:text-red-700 p-1 shrink-0">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderUI();
+            setInterval(() => {
+                signalTimerSeconds += 1;
+                const el = document.getElementById('lastSignalTicker');
+                if (el) el.textContent = `Sinyal terakhir ${signalTimerSeconds} dtk lalu`;
+                if (signalTimerSeconds % 5 === 0) {
+                    cycleOfficeSpeech();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
+```
